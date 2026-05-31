@@ -983,7 +983,11 @@ tpot-threat-intelligence/
 │   ├── install-docker.sh   
 │
 ├── report/
-│   ├── 
+│   ├── T-Pot_Threat_Intelligence_Report_v2.md
+│   ├── T-Pot_Threat_Intelligence_Report_v2.pdf
+│
+├── queries/
+│   ├── queries.md
 │
 ├── iocs/
 │   ├──      
