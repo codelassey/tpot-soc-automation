@@ -287,8 +287,6 @@ Reconnected using the new port:
 ssh -i "myhoney.pem" -p 64295 apostrophe@<elastic-ip>
 ```
 
-![](images/media/image46.png)
-
 ### 4.3 Verifying the Web UI
 
 Accessed the T-Pot web interface at `https://<elastic-ip>:64297`. Kept getting a "site can't be reached" error. Everything looked fine in the backend though:
@@ -587,7 +585,7 @@ The full configuration is in [`config/inputs.conf`](config/inputs.conf) in this 
 | `index` | `honeypot` | Routes all events to the dedicated honeypot index |
 | `followTail` | `0` | Reads existing files from byte 0 — ensures complete historical ingestion on first run, then automatically transitions to real-time tailing |
 | `crcSalt` | `<SOURCE>` | Includes the full file path in Splunk's checksum. Critical: ensures logrotate-numbered copies (`cowrie.json.1`, `suricata.csv.3`) are treated as unique inputs rather than duplicates of the active file |
-| `whitelist` | <.(csv | log |
+| `whitelist` | <code>\.(csv\|log\|json)(\.\d+)?$</code> | log |
 | `sourcetype` | Per-honeypot (see config) | Each honeypot has its own sourcetype for proper field extraction |
 
 **The single-stanza mistake:** My first attempt used one wildcard stanza with `sourcetype = tpot:logs` for everything. Zero events showed up. The issue is that each honeypot produces differently structured logs - JSON, CSV, plain text and Splunk's field extraction is tied to sourcetype. Fixing it meant giving every honeypot its own stanza with its specific sourcetype like you see below
@@ -908,7 +906,7 @@ T-Pot's built-in Kibana dashboards are excellent for visual exploration. The mos
 
 ```
 -- ECS-style field for source IP (T-Pot normalises to this)
-source.ip: *
+src_ip: *
 
 -- Filter to specific honeypot
 type: "Cowrie"
@@ -917,10 +915,10 @@ type: "ADBHoney"
 type: "Suricata"
 
 -- Successful Cowrie logins only
-type: "Cowrie" AND event.id: "cowrie.login.success"
+type: "Cowrie" AND eventid: "cowrie.login.success"
 
 -- Post-exploitation commands
-type: "Cowrie" AND event.id: "cowrie.command.input"
+type: "Cowrie" AND eventid: "cowrie.command.input"
 
 -- EternalBlue/DoublePulsar alerts only
 type: "Suricata" AND alert.signature: *DoublePulsar*
@@ -929,10 +927,10 @@ type: "Suricata" AND alert.signature: *DoublePulsar*
 type: "Suricata" AND alert.signature: *CVE-2024-4577*
 
 -- Specific source IP investigation
-source.ip: "81.9.145.130"
+src_ip: "81.9.145.130"
 
 -- File downloads (malware delivery)
-type: "Cowrie" AND event.id: "cowrie.session.file_download"
+type: "Cowrie" AND eventid: "cowrie.session.file_download"
 ```
 
 ---
