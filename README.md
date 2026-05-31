@@ -125,15 +125,15 @@ This deployment also feeds data into a companion AI Augmented SOC Detection Engi
 
 Started by creating a dedicated IAM user rather than using the root account, a standard practice and my first real AWS project principle: never use root for operational work.
 
-![](http://localhost:55307/files/images/media/image1.png)
+![](images/media/image1.png)
 
-![](http://localhost:55307/files/images/media/image2.png)
+![](images/media/image2.png)
 
-![](http://localhost:55307/files/images/media/image3.png)
+![](images/media/image3.png)
 
-![](http://localhost:55307/files/images/media/image4.png)
+![](images/media/image4.png)
 
-![](http://localhost:55307/files/images/media/image5.png)
+![](images/media/image5.png)
 
 For the instance itself:
 
@@ -142,12 +142,14 @@ For the instance itself:
 -   **Storage:** 128 GB (gp3) - T-Pot runs a full ELK stack in Docker so it eats disk fast
 -   **Key pair:** Created a new `.pem` key pair for SSH access
 
-![](http://localhost:55307/files/images/media/image7.png)  
-![](http://localhost:55307/files/images/media/image10.png) ![](http://localhost:55307/files/images/media/image8.png)
+![](images/media/image7.png)  
+![](images/media/image10.png) 
+![](images/media/image8.png)
 
 For network settings during launch, I created a new security group (`launch-wizard-1`) with a single rule allowing SSH from my IP only. The plan was to lock it down tight first and open it up for attacks only after everything was verified working.
 
-![](http://localhost:55307/files/images/media/image9.png) ![](http://localhost:55307/files/images/media/image11.png)
+![](images/media/image9.png) 
+![](images/media/image11.png)
 
 ### 3.2 Elastic IP & SSH Access
 
@@ -158,7 +160,9 @@ Steps:
 1.  EC2 Console > Elastic IPs > Allocate Elastic IP address
 2.  Associate it to the running instance
 
-![](http://localhost:55307/files/images/media/image13.png) ![](http://localhost:55307/files/images/media/image14.png) ![](http://localhost:55307/files/images/media/image15.png)
+![](files/images/media/image13.png) 
+![](images/media/image14.png) 
+![](images/media/image15.png)
 
 Then connected via SSH:
 
@@ -166,7 +170,8 @@ Then connected via SSH:
 ssh -i "myhoney.pem" ubuntu@<elastic-ip>
 ```
 
-![](http://localhost:55307/files/images/media/image16.png) ![](http://localhost:55307/files/images/media/image17.png)
+![](images/media/image16.png) 
+![](images/media/image17.png)
 
 First thing after getting in:
 
@@ -174,7 +179,7 @@ First thing after getting in:
 sudo apt update && sudo apt upgrade -y
 ```
 
-![](http://localhost:55307/files/images/media/image18.png)
+![](images/media/image18.png)
 
 ### 3.3 User Account
 
@@ -187,7 +192,7 @@ sudo usermod -aG sudo apostrophe
 
 Then logged out and back in as `apostrophe` for all subsequent work.
 
-![](http://localhost:55307/files/images/media/image19.png)
+![](images/media/image19.png)
 
 The `~/.ssh/authorized_keys` file for `apostrophe` was either missing or owned by root. The server does not have the ssh public key for the user apostrophe.
 
@@ -201,11 +206,13 @@ sudo chmod 700 /home/apostrophe/.ssh
 sudo chmod 600 /home/apostrophe/.ssh/authorized_keys
 ```
 
-![](http://localhost:55307/files/images/media/image25.png) ![](http://localhost:55307/files/images/media/image26.png) ![](http://localhost:55307/files/images/media/image27.png)
+![](images/media/image25.png) 
+![](images/media/image26.png) 
+![](images/media/image27.png)
 
 ### 3.4 Docker Installation
 
-![](http://localhost:55307/files/images/media/image22.png)
+![](images/media/image22.png)
 
 T-Pot runs entirely in Docker, so that had to go on first. Downloaded the install script from the kitpro docker guide:
 
@@ -222,13 +229,13 @@ docker --version
 docker compose version
 ```
 
-![](http://localhost:55307/files/images/media/image30.png)
+![](images/media/image30.png)
 
 ---
 
 ## 4\. T-Pot Honeypot Installation
 
-![](http://localhost:55307/files/images/media/image37.png)
+![](images/media/image37.png)
 
 ### 4.1 Installation & Configuration
 
@@ -241,14 +248,16 @@ cd tpotce
 sudo ./install.sh
 ```
 
-![](http://localhost:55307/files/images/media/image38.png) ![](http://localhost:55307/files/images/media/image39.png)
+![](images/media/image38.png) 
+![](images/media/image39.png)
 
 Installation options selected:
 
 -   **Type:** Hive - the standard full install with maximum capabilities
 -   **Web UI credentials:** Set a username and password (not writing them here obviously lol)
 
-![](http://localhost:55307/files/images/media/image40.png) ![](http://localhost:55307/files/images/media/image41.png)
+![](images/media/image40.png) 
+![](images/media/image41.png)
 
 The installer pulls all the Docker images, configures the ELK stack, and changes the main SSH port. In my case it moved to **port 64295** - the old port 22 becomes the Cowrie SSH honeypot.
 
@@ -258,7 +267,7 @@ After install completed, rebooted the instance:
 sudo reboot
 ```
 
-![](http://localhost:55307/files/images/media/image42.png)
+![](images/media/image42.png)
 
 ### 4.2 Security Group Rules
 
@@ -278,8 +287,6 @@ Reconnected using the new port:
 ssh -i "myhoney.pem" -p 64295 apostrophe@<elastic-ip>
 ```
 
-![](http://localhost:55307/files/images/media/image46.png)
-
 ### 4.3 Verifying the Web UI
 
 Accessed the T-Pot web interface at `https://<elastic-ip>:64297`. Kept getting a "site can't be reached" error. Everything looked fine in the backend though:
@@ -289,11 +296,11 @@ sudo systemctl status tpot
 sudo docker ps
 ```
 
-![](http://localhost:55307/files/images/media/image48.png)
+![](images/media/image48.png)
 
 All containers were running. Turned out the issue was that my IP filter in the security group rule was too restrictive - a quirk with how AWS handles source IP matching on some browser setups. Fixed it by temporarily allowing `0.0.0.0/0` on port 64297, confirmed the UI loaded, then immediately locked it back to my IP.
 
-![](http://localhost:55307/files/images/media/image49.png)
+![](images/media/image49.png)
 
 First time logging in I had a credential issue. The exclamation mark in my intended username (`questionmark!`) was being silently dropped by the T-Pot user management script. When I thought everything was going well... nope. Used the `genuser.sh` script from the tpot directory to create a clean new credential set:
 
@@ -302,7 +309,7 @@ cd /opt/tpotce
 sudo ./genuser.sh
 ```
 
-![](http://localhost:55307/files/images/media/image50.png) ![](http://localhost:55307/files/images/media/image51.png)
+![](images/media/image50.png) ![](images/media/image51.png)
 
 After that, the UI loaded clean. Confirmed all the built-in tools were working:
 
@@ -311,11 +318,11 @@ After that, the UI loaded clean. Confirmed all the built-in tools were working:
 -   Spiderfoot
 -   Kibana (was still loading - takes a couple of minutes on first boot)
 
-![](http://localhost:55307/files/images/media/image52.png) ![](http://localhost:55307/files/images/media/image53.png) ![](http://localhost:55307/files/images/media/image54.png) ![](http://localhost:55307/files/images/media/image55.png) ![](http://localhost:55307/files/images/media/image56.png)
+![](images/media/image52.png) ![](images/media/image53.png) ![](images/media/image54.png) ![](images/media/image55.png) ![](images/media/image56.png)
 
 ### 4.4 Opening to the Internet
 
-![](http://localhost:55307/files/images/media/image57.png)
+![](images/media/image57.png)
 
 Once everything was confirmed working, updated the security group to allow all inbound traffic on ports 0–64000. Rebooted the instance and within a few minutes, hits started coming in.
 
@@ -323,11 +330,11 @@ Once everything was confirmed working, updated the security group to allow all i
 -   After 7 hours: visible attack volume across multiple honeypots
 -   After 2 weeks: thousands of events per day, multiple countries
 
-![](http://localhost:55307/files/images/media/image59.png) ![](http://localhost:55307/files/images/media/image60.png) ![](http://localhost:55307/files/images/media/image61.png) ![](http://localhost:55307/files/images/media/image62.png)
+![](images/media/image59.png) ![](images/media/image60.png) ![](images/media/image61.png) ![](images/media/image62.png)
 
 Edited the inbound rules back (restricted to my IP only) when it was time to do the analysis cleanly.
 
-![](http://localhost:55307/files/images/media/image63.png)
+![](images/media/image63.png)
 
 ---
 
@@ -341,7 +348,7 @@ Found all compressed log files:
 sudo find /home/apostrophe/tpotce/data/*/log -name "*.gz"
 ```
 
-![](http://localhost:55307/files/images/media/image64.png)
+![](images/media/image64.png)
 
 Decompressed everything while keeping the originals (the `-k` flag) and skipping the ELK directory (those are internal T-Pot indexes, not attack logs):
 
@@ -351,7 +358,7 @@ sudo find /home/apostrophe/tpotce/data \
   -o -name "*.gz" -exec gunzip -kf {} \;
 ```
 
-![](http://localhost:55307/files/images/media/image65.png)
+![](images/media/image65.png)
 
 Verified the output:
 
@@ -361,7 +368,7 @@ sudo find /home/apostrophe/tpotce/data \
   -o \( -name "*.json" -o -name "*.csv" -o -name "*.log" \) -print | head -10
 ```
 
-![](http://localhost:55307/files/images/media/image66.png)
+![](images/media/image66.png)
 
 Worked.
 
@@ -379,7 +386,7 @@ cd /opt/splunk
 sudo -u splunk ./bin/splunk start
 ```
 
-![](http://localhost:55307/files/images/media/image67.png) ![](http://localhost:55307/files/images/media/image68.png) ![](http://localhost:55307/files/images/media/image69.png) ![](http://localhost:55307/files/images/media/image70.png)
+![](images/media/image67.png) ![](images/media/image68.png) ![](images/media/image69.png) ![](images/media/image70.png)
 
 Enabled Splunk to start automatically on boot:
 
@@ -391,7 +398,7 @@ sudo systemctl start Splunk
 
 Verified it was running at `http://localhost:8000`.
 
-![](http://localhost:55307/files/images/media/image72.png)
+![](images/media/image72.png)
 
 ### 6.2 Creating the Honeypot Index
 
@@ -403,13 +410,13 @@ Settings > Indexes > New Index
 | --- | --- |
 | Index Name | `honeypot` |
 
-![](http://localhost:55307/files/images/media/image75.png)
+![](images/media/image75.png)
 
 Then configured Splunk to receive forwarded data:
 
 Settings > Forwarding and Receiving > Configure Receiving > New Receiving Port: **9997**
 
-![](http://localhost:55307/files/images/media/image78.png)
+![](images/media/image78.png)
 
 Verified Splunk was listening:
 
@@ -417,7 +424,7 @@ Verified Splunk was listening:
 sudo netstat -tlnp | grep 9997
 ```
 
-![](http://localhost:55307/files/images/media/image79.png)
+![](images/media/image79.png)
 
 ---
 
@@ -431,23 +438,23 @@ Installed Tailscale on both machines:
 curl -fsSL https://tailscale.com/install.sh | sh
 ```
 
-![](http://localhost:55307/files/images/media/image80.png)
+![](images/media/image80.png)
 
 ```bash
 sudo tailscale up
 ```
 
-![](http://localhost:55307/files/images/media/image81.png)
+![](images/media/image81.png)
 
 Logged into the same Tailscale account on both. After auth, each machine gets a stable private IP in the `100.x.x.x` range that never changes.
 
-![](http://localhost:55307/files/images/media/image82.png) ![](http://localhost:55307/files/images/media/image83.png) ![](http://localhost:55307/files/images/media/image84.png)
+![](images/media/image82.png) ![](images/media/image83.png) ![](images/media/image84.png)
 
 One thing to note: I masked the Tailscale IP in the documentation screenshots since I was planning to use a Tailscale Funnel for another project, didn't want to expose that IP unnecessarily.
 
 Verified connectivity between the two machines:
 
-![](http://localhost:55307/files/images/media/image85.png)
+![](images/media/image85.png)
 
 ```bash
 ping <tailscale-ip-of-splunk-vm>
@@ -463,28 +470,28 @@ Success. The EC2 instance could now reach the Splunk receiver on the local VM ov
 
 Downloaded and installed the [Splunk Universal Forwarder](https://www.splunk.com/en_us/download/universal-forwarder.html) on the EC2 instance:
 
-![](http://localhost:55307/files/images/media/image86.png)
+![](images/media/image86.png)
 
-![](http://localhost:55307/files/images/media/image87.png)
+![](images/media/image87.png)
 
 ```bash
 sudo tar -xvzf splunkforwarder*.tgz
 ```
 
-![](http://localhost:55307/files/images/media/image88.png)
+![](images/media/image88.png)
 
 ```bash
 sudo mv splunkforwarder /opt/
 cd /opt/splunkforwarder/bin
 ```
 
-![](http://localhost:55307/files/images/media/image89.png)
+![](images/media/image89.png)
 
 ```bash
 sudo ./splunk start --accept-license
 ```
 
-![](http://localhost:55307/files/images/media/image90.png)
+![](images/media/image90.png)
 
 I then enabled bootstart to make sure the forwarder survives reboots automatically.  
 
@@ -506,7 +513,7 @@ sudo -u splunkfwd ./splunk status
 
 The forwarder was not started yet
 
-![](http://localhost:55307/files/images/media/image91.png)
+![](images/media/image91.png)
 
 Pointed the forwarder at the Splunk receiver using the Tailscale IP:
 
@@ -516,11 +523,11 @@ sudo ./splunk add forward-server <tailscale-ip-of-splunk>:9997
 
 but listing the forwarders showed configured but inactive. I had to start splunkforwarder first.  
 
-![](http://localhost:55307/files/images/media/image92.png)
+![](images/media/image92.png)
 
 Running `enable boot-start` as root, Splunk records root as the boot user in the systemd unit file and then refuses to start as the `splunkfwd` user.
 
-![](http://localhost:55307/files/images/media/image93.png)
+![](images/media/image93.png)
 
 To fix it, this is what I did:
 
@@ -545,7 +552,7 @@ sudo systemctl start SplunkForwarder
 sudo systemctl status SplunkForwarder
 ```
 
-![](http://localhost:55307/files/images/media/image94.png)
+![](images/media/image94.png)
 
 I then run
 
@@ -555,7 +562,7 @@ I then run
 
 which asked me to login using the username and password I had created earlier on. Now, I had an active forward.  
 
-![](http://localhost:55307/files/images/media/image95.png)
+![](images/media/image95.png)
 
 ### 8.2 inputs.conf Configuration
 
@@ -567,9 +574,9 @@ The inputs.conf file lives at:
 
 Not `/opt/splunkforwarder/etc/system/local/inputs.conf` - that path exists but the apps path is where it actually takes effect. Learned that one the hard way lol.
 
-![](http://localhost:55307/files/images/media/image96.png)
+![](images/media/image96.png)
 
-The full configuration is in [`config/inputs.conf`](http://localhost:55307/files/config/inputs.conf) in this repo. Here's what each parameter does:
+The full configuration is in [`config/inputs.conf`](config/inputs.conf) in this repo. Here's what each parameter does:
 
 | Parameter | Value | Purpose |
 | --- | --- | --- |
@@ -578,12 +585,12 @@ The full configuration is in [`config/inputs.conf`](http://localhost:55307/files
 | `index` | `honeypot` | Routes all events to the dedicated honeypot index |
 | `followTail` | `0` | Reads existing files from byte 0 — ensures complete historical ingestion on first run, then automatically transitions to real-time tailing |
 | `crcSalt` | `<SOURCE>` | Includes the full file path in Splunk's checksum. Critical: ensures logrotate-numbered copies (`cowrie.json.1`, `suricata.csv.3`) are treated as unique inputs rather than duplicates of the active file |
-| `whitelist` | <.(csv | log |
+| `whitelist` | <code>\.(csv\|log\|json)(\.\d+)?$</code> | log |
 | `sourcetype` | Per-honeypot (see config) | Each honeypot has its own sourcetype for proper field extraction |
 
 **The single-stanza mistake:** My first attempt used one wildcard stanza with `sourcetype = tpot:logs` for everything. Zero events showed up. The issue is that each honeypot produces differently structured logs - JSON, CSV, plain text and Splunk's field extraction is tied to sourcetype. Fixing it meant giving every honeypot its own stanza with its specific sourcetype like you see below
 
-![](http://localhost:55307/files/images/media/image98.png) ![](http://localhost:55307/files/images/media/image99.png)
+![](images/media/image98.png) ![](images/media/image99.png)
 
 ### 8.3 Troubleshooting Ingestion
 
@@ -624,7 +631,7 @@ Claude Desktop doesn't have an official Linux build yet, so used the community D
 sudo apt update && sudo apt upgrade -y
 ```
 
-![](http://localhost:55307/files/images/media/image100.png)
+![](images/media/image100.png)
 
 ```bash
 # Node.js (required for MCP servers)
@@ -632,7 +639,7 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
 
-![](http://localhost:55307/files/images/media/image101.png)
+![](images/media/image101.png)
 
 ```bash
 # Verify
@@ -640,17 +647,17 @@ node --version
 npx --version
 ```
 
-![](http://localhost:55307/files/images/media/image102.png)
+![](images/media/image102.png)
 
 Downloaded the `.deb` from: [https://github.com/aaddrick/claude-desktop-debian/releases](https://github.com/aaddrick/claude-desktop-debian/releases)
 
-![](http://localhost:55307/files/images/media/image104.png)
+![](images/media/image104.png)
 
 ```bash
 sudo dpkg -i claude-desktop-*-amd64.deb
 ```
 
-![](http://localhost:55307/files/images/media/image105.png) ![](http://localhost:55307/files/images/media/image106.png) ![](http://localhost:55307/files/images/media/image109.png)
+![](images/media/image105.png) ![](images/media/image106.png) ![](images/media/image109.png)
 
 ### 9.2 Splunk MCP Server Setup
 
@@ -658,7 +665,7 @@ In Splunk Enterprise:
 
 **1\. Install the Splunk MCP Server app** from Splunkbase (search: "MCP Server")
 
-![](http://localhost:55307/files/images/media/image110.png)
+![](images/media/image110.png)
 
 **2\. Create an `mcp_user` role:**
 
@@ -667,17 +674,17 @@ Settings > Roles > New Role
 -   Inherit from: `user`
 -   Add capabilities: all `mcp_*` capabilities
 
-![](http://localhost:55307/files/images/media/image112.png) ![](http://localhost:55307/files/images/media/image113.png) ![](http://localhost:55307/files/images/media/image114.png)
+![](images/media/image112.png) ![](images/media/image113.png) ![](images/media/image114.png)
 
 **3\. Create an `mcp_user_1` account and assign it the `mcp_user` role**
 
-![](http://localhost:55307/files/images/media/image115.png) ![](http://localhost:55307/files/images/media/image116.png) ![](http://localhost:55307/files/images/media/image117.png)
+![](images/media/image115.png) ![](images/media/image116.png) ![](images/media/image117.png)
 
 **4\. Generate an MCP authentication token** for `mcp_user_1`:
 
 Settings > Tokens > New Token
 
-![](http://localhost:55307/files/images/media/image118.png) ![](http://localhost:55307/files/images/media/image119.png) ![](http://localhost:55307/files/images/media/image121.png)
+![](images/media/image118.png) ![](images/media/image119.png) ![](images/media/image121.png)
 
 Copy the token immediately. Once you close that page it's gone forever and you'll have to generate a new one.
 
@@ -691,7 +698,7 @@ The Claude Desktop config lives at:
 ~/.config/Claude/claude_desktop_config.json
 ```
 
-The full config.. with Virustotal MCP is in [`config/claude_desktop_config.json`](http://localhost:55307/files/config/claude_desktop_config.json). Below shows that for Splunk.
+The full config.. with Virustotal MCP is in [`config/claude_desktop_config.json`](config/claude_desktop_config.json). Below shows that for Splunk.
 
 ```json
 {
@@ -713,11 +720,11 @@ The full config.. with Virustotal MCP is in [`config/claude_desktop_config.json`
 }
 ```
 
-![](http://localhost:55307/files/images/media/image122.png)
+![](images/media/image122.png)
 
 Note that the token must be pasted after Bearer as seen below. Save it afterwards
 
-![](http://localhost:55307/files/images/media/image123.png)
+![](images/media/image123.png)
 
 After saving the config, restart Claude Desktop:
 
@@ -726,12 +733,12 @@ sudo pkill -f claude-desktop
 claude-desktop &
 ```
 
-![](http://localhost:55307/files/images/media/image125.png) ![](http://localhost:55307/files/images/media/image126.png)
+![](images/media/image125.png) ![](images/media/image126.png)
 
-What data do I have currently indexed in splunk? ![](http://localhost:55307/files/images/media/image127.png)  
+What data do I have currently indexed in splunk? ![](images/media/image127.png)  
 Query the honeypot index and identify the top 10 IPs performing port scanning activity. For each IP, show which ports they scanned and which honeypots they triggered, ordered by total event count.  
 
-![](http://localhost:55307/files/images/media/image128.png)
+![](images/media/image128.png)
 
 ---
 
@@ -741,7 +748,7 @@ All queries run against `index=honeypot`. These are the core queries used throug
 
 ### 10.1 Discovery  Queries
 
-![](http://localhost:55307/files/images/media/image129.png)
+![](images/media/image129.png)
 
 ```spl
 -- Total unique IPs and events (application-layer honeypots)
@@ -755,7 +762,7 @@ index=honeypot sourcetype=suricata:json NOT src_ip="172.31.*" NOT src_ip="169.25
 
 ### 10.2 Attack Surface Queries
 
-![](http://localhost:55307/files/images/media/image130.png)
+![](images/media/image130.png)
 
 ```spl
 -- Top 20 attacking IPs
@@ -792,7 +799,7 @@ index=honeypot sourcetype=p0f:log mod="syn" subject="cli" os!="???" os!=""
 
 ### 10.3 Cowrie SSH/Telnet Queries
 
-![](http://localhost:55307/files/images/media/image131.png)
+![](images/media/image131.png)
 
 ```spl
 -- Session event summary
@@ -821,7 +828,7 @@ index=honeypot sourcetype=cowrie src_ip="<TARGET_IP>"
 
 ### 10.4 Threat Intelligence Queries
 
-![](http://localhost:55307/files/images/media/image133.png)
+![](images/media/image133.png)
 
 ```spl
 -- DoublePulsar/EternalBlue scanning — top source IPs
@@ -860,7 +867,7 @@ index=honeypot sourcetype=adbhoney
 
 ### 10.5 Campaign & Attribution Queries
 
-![](http://localhost:55307/files/images/media/image134.png)
+![](images/media/image134.png)
 
 ```spl
 -- IONOS fleet detection (coordinated VPS campaign)
@@ -899,7 +906,7 @@ T-Pot's built-in Kibana dashboards are excellent for visual exploration. The mos
 
 ```
 -- ECS-style field for source IP (T-Pot normalises to this)
-source.ip: *
+src_ip: *
 
 -- Filter to specific honeypot
 type: "Cowrie"
@@ -908,10 +915,10 @@ type: "ADBHoney"
 type: "Suricata"
 
 -- Successful Cowrie logins only
-type: "Cowrie" AND event.id: "cowrie.login.success"
+type: "Cowrie" AND eventid: "cowrie.login.success"
 
 -- Post-exploitation commands
-type: "Cowrie" AND event.id: "cowrie.command.input"
+type: "Cowrie" AND eventid: "cowrie.command.input"
 
 -- EternalBlue/DoublePulsar alerts only
 type: "Suricata" AND alert.signature: *DoublePulsar*
@@ -920,10 +927,10 @@ type: "Suricata" AND alert.signature: *DoublePulsar*
 type: "Suricata" AND alert.signature: *CVE-2024-4577*
 
 -- Specific source IP investigation
-source.ip: "81.9.145.130"
+src_ip: "81.9.145.130"
 
 -- File downloads (malware delivery)
-type: "Cowrie" AND event.id: "cowrie.session.file_download"
+type: "Cowrie" AND eventid: "cowrie.session.file_download"
 ```
 
 ---
@@ -932,7 +939,7 @@ type: "Cowrie" AND event.id: "cowrie.session.file_download"
 
 The full threat intelligence report generated from this deployment is available here:
 
-**[T-Pot Threat Intelligence Report v2.0 (PDF)](http://localhost:55307/files/reports/T-Pot_Threat_Intelligence_Report_v2.pdf)**
+**[T-Pot Threat Intelligence Report v2.0 (PDF)](reports/T-Pot_Threat_Intelligence_Report_v2.pdf)**
 
 The report covers  includes:
 
