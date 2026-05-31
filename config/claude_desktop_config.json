@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "virustotal": {
+      "command": "node",
+      "env": {
+        "VIRUSTOTAL_API_KEY": "<Your virustotal API key here>"
+      }
+    },
+    "splunk-mcp-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://192.168.56.112:8089/services/mcp",
+        "--header",
+        "Authorization: Bearer <token>"
+      ],
+      "env": {
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
+    }
+  }
+}
