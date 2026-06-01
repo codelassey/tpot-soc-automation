@@ -16,13 +16,13 @@ By: Prince Lassey
 3.  [Attack Volume & Source Analysis](#3-attack-volume--source-analysis)
     -   3.1 [Total Event Counts](#31-total-event-counts)
     -   3.2 [Attack Volume by Service](#32-attack-volume-by-service)
-    -   3.3 [Top 15 Attacking IPs](#33-top-15-attacking-ips)
+    -   3.3 [Top 20 Attacking IPs](#33-top-20-attacking-ips)
     -   3.4 [Attacker Infrastructure](#34-attacker-infrastructure)
     -   3.5 [Attacker IP Reputation](#35-attacker-ip-reputation)
     -   3.6 [Operating System Fingerprinting (p0f)](#36-operating-system-fingerprinting-p0f)
 4.  [Geographic Distribution](#4-geographic-distribution)
-5.  [Attack Surface - Target Ports & Protocols](#5-attack-surface-target-ports--protocols)
-6.  [Vulnerability Exploitation - CVE Detections](#6-vulnerability-exploitation-cve-detections)
+5. [Attack Surface - Target Ports & Protocols](#5-attack-surface---target-ports--protocols)
+6. [Vulnerability Exploitation - CVE Detections](#6-vulnerability-exploitation---cve-detections)
 7.  [Attacker Tooling & Detection Signatures](#7-attacker-tooling--detection-signatures)
     -   7.1 [Scanning Tools Detected](#71-scanning-tools-detected)
     -   7.2 [Top Suricata Signatures Fired](#72-top-suricata-signatures-fired)
@@ -31,18 +31,18 @@ By: Prince Lassey
 9.  [Malware & Payload Analysis](#9-malware--payload-analysis)
 10.  [Post-Exploitation Command Analysis](#10-post-exploitation-command-analysis)
      -   10.1 [Most Executed Commands](#101-most-executed-commands)
-     -   10.2 [SSH Key Backdoor - "mdrfckr"](#102-ssh-key-backdoor-mdrfckr)
+     -  10.2 [SSH Key Backdoor - "mdrfckr"](#102-ssh-key-backdoor---mdrfckr)
      -   10.3 [Cleanup Command](#103-cleanup-command)
-     -   10.4 [Cowrie Post-Exploitation Commands - By Attacker IP](#104-cowrie-post-exploitation-commands-by-attacker-ip)
-     -   10.5 [ADB Honeypot Attack Commands - By Attacker IP](#105-adb-honeypot-attack-commands-by-attacker-ip)
-     -   10.6 [Web Honeypot HTTP Attack Analysis](#106-web-honeypot-http-attack-analysis-tanner-wordpot-nginx-ipphoney-dionaea)
+     - 10.4 [Cowrie Post-Exploitation Commands - By Attacker IP](#104-cowrie-post-exploitation-commands---by-attacker-ip)
+     - 10.5 [ADB Honeypot Attack Commands - By Attacker IP](#105-adb-honeypot-attack-commands---by-attacker-ip)
+     - 10.6 [Web Honeypot HTTP Attack Analysis](#106-web-honeypot-http-attack-analysis)
 11.  [Coordinated Attack Campaigns](#11-coordinated-attack-campaigns)
 12.  [Human Behaviour Analysis](#12-human-behaviour-analysis)
 13.  [DoublePulsar / SMB Exploitation Campaign](#13-doublepulsar--smb-exploitation-campaign)
 14.  [Redis Honeypot Activity](#14-redis-honeypot-activity)
-15.  [Reconstructed Attack Timelines](#16-reconstructed-attack-timelines)
-16.  [Threat Indicators of Compromise (IOCs)](#17-threat-indicators-of-compromise-iocs)
-17.  [VirusTotal IP Enrichment](#17-virusTotal-ip-enrichment)
+15. [Reconstructed Attack Timelines](#15-reconstructed-attack-timelines)
+16. [Threat Indicators of Compromise (IOCs)](#16-threat-indicators-of-compromise-iocs)
+17. [VirusTotal IP Enrichment - Full 100-IP Dataset](#17-virustotal-ip-enrichment---full-100-ip-dataset)
 18.  [Recommendations](#18-recommendations)
 19.  [Appendix](#19-appendix)
 
@@ -111,10 +111,10 @@ All event counts in this report are derived directly from Splunk queries against
 
 ### 3.2 Attack Volume by Service
 
-![](https://user-cdn.phcode.site/images/1aae7834-5471-4c49-a6ac-6b1aec0bbb74.png)  
+![](../images/media/picture1.png)  
 **Note on p0f volume:** p0f fires a log entry for every observed TCP connection (MTU probe, SYN fingerprint, SYN+ACK). Its high count reflects total inbound connection attempts across all ports - not discrete attackers. 
 
-### 3.3 Top 20 Attacking IPs - All Sources, VT Enriched
+### 3.3 Top 20 Attacking IPs
 
 Corrected ranking based on verified attack counts across all honeypot sourcetypes. VT enrichment from VirusTotal IP analysis (100 IPs analysed).
 
@@ -178,7 +178,7 @@ Suricata fired blocklist-based DROP and CINS signatures against **9,067 unique e
 
 ### 3.6 Operating System Fingerprinting (p0f)
 
-![](https://user-cdn.phcode.site/images/304209dc-299b-4333-b4c5-9cfd5dfe56f5.png)
+![](../images/media/picture2.png)  
 
 p0f passively fingerprinted the OS of inbound connection sources via TCP SYN analysis (`mod=syn`, `subject=cli`, external IPs only). Total fingerprinted connections: **281,821**.
 
@@ -190,11 +190,11 @@ p0f passively fingerprinted the OS of inbound connection sources via TCP SYN ana
 
 ### 4.1 Top 15 Source Countries
 
-![](https://user-cdn.phcode.site/images/1df875c1-de6e-453f-8cee-218951923a0f.png)
+![](../images/media/picture3.png)  
 
 ---
 
-## 5\. Attack Surface - Target Ports & Protocols
+## 5. Attack Surface - Target Ports & Protocols 
 
 ### 5.1 Top 15 Targeted Ports (Suricata)
 
@@ -227,7 +227,7 @@ p0f passively fingerprinted the OS of inbound connection sources via TCP SYN ana
 
 ---
 
-## 6\. Vulnerability Exploitation - CVE Detections
+## 6. Vulnerability Exploitation - CVE Detections 
 
 All CVEs below were detected via Suricata signature matches against external, non-RFC1918 source IPs.
 
@@ -248,7 +248,7 @@ All CVEs below were detected via Suricata signature matches against external, no
 
 ---
 
-## 7\. Attacker Tooling & Detection Signatures
+## 7. Attacker Tooling & Detection Signatures
 
 ### 7.1 Scanning Tools Detected
 
