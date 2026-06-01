@@ -1,6 +1,4 @@
-## [1\. Claude Queries](http://localhost:55307/files/tpot-threat-intelligence/queries/1-claude)
-
-## [2\. Splunk Queries](http://localhost:55307/files/tpot-threat-intelligence/queries/2-splunk-queries)
+## Claude and Splunk Queries
 
 ---
 
