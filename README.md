@@ -937,7 +937,7 @@ type: "Cowrie" AND eventid: "cowrie.session.file_download"
 
 ## 12\. Threat Intelligence Report
 
-The full threat intelligence report generated from this deployment is available here:
+The full threat intelligence report for this deployment is available here:
 
 **[T-Pot Threat Intelligence Report v2.0 (PDF)](reports/T-Pot_Threat_Intelligence_Report_v2.pdf)**
 
