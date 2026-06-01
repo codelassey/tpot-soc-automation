@@ -939,7 +939,7 @@ type: "Cowrie" AND eventid: "cowrie.session.file_download"
 
 The full threat intelligence report for this deployment is available here:
 
-**[T-Pot Threat Intelligence Report v2.0 (PDF)](reports/T-Pot_Threat_Intelligence_Report_v2.pdf)**
+**[T-Pot Threat Intelligence Report v2.0 (PDF)](report/T-Pot_Threat_Intelligence_Report_v2.pdf)**
 
 The report covers  includes:
 
