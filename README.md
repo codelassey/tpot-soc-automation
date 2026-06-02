@@ -802,9 +802,6 @@ index=honeypot sourcetype=p0f:log mod="syn" subject="cli" os!="???" os!=""
 ![](images/media/image131.png)
 
 ```spl
--- Session event summary
-index=honeypot sourcetype=cowrie | stats count by eventid | sort -count
-
 -- All successful logins
 index=honeypot sourcetype=cowrie eventid="cowrie.login.success"
 | table _time, src_ip, username, password | sort _time
@@ -876,11 +873,6 @@ index=honeypot
    OR src_ip="31.70.75.117" OR src_ip="31.70.78.114" OR src_ip="31.70.78.222"
    OR src_ip="31.70.75.104" OR src_ip="31.70.75.118" OR src_ip="31.70.77.205")
 | stats count by src_ip | sort -count
-
--- Coordinated actor pair (shared credentials detection)
-index=honeypot sourcetype=cowrie eventid="cowrie.login.success"
-  (src_ip="81.9.145.130" OR src_ip="197.140.11.157")
-| sort _time | table _time, src_ip, eventid, username, password
 
 -- 2026-05-24 mass compromise wave timeline
 index=honeypot sourcetype=cowrie eventid="cowrie.login.success"
@@ -1009,4 +1001,4 @@ tpot-threat-intelligence/
 -   The T-Pot MCP connection used in log analysis was through Claude.ai - the Splunk and Virustotal MCP servers were connected as tools in the conversation.
 -   All VirusTotal lookups were performed via MCP; the hash and IP results are documented in the full report.
 -   Log retention was adjusted to ~3 months partway through the deployment. Some early-window tool detections (Masscan, Mozi, libredtail-http) are documented from pre-rotation logs and are no longer queryable in the current Splunk index.
--   This project feeds into a companion **SOC Detection Engineering lab** (separate repository) where captured IOCs and attack patterns are used to build and validate Splunk detection rules.
+-   This project feeds into a companion **SOC Detection Engineering and Automation Project** (separate repository) where captured IOCs and attack patterns are used to build and validate Splunk detection rules.
