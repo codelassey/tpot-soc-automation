@@ -1,0 +1,49 @@
+# 
+# T-Pot C2/Domain IOC — Suricata Drop Rules
+# Source: https://github.com/codelassey/
+# Last updated: 2026-06-02
+# Usage: Will add this ruleset to /usr/local/etc/suricata/rules/ or on OPNsense (Services > Intrusion Detection > Administration > Rules)
+# Prince Lassey.. rules derived from my honeypot deployment 
+
+# CRITICAL: Cobalt Strike C2
+drop ip 18.218.118.203 any -> $HOME_NET any (msg:"TPOT CRITICAL Cobalt Strike C2 AWS"; sid:9000001; rev:1;)
+drop ip 3.132.26.232   any -> $HOME_NET any (msg:"TPOT CRITICAL Cobalt Strike JARM AWS domain-fronting"; sid:9000002; rev:1;)
+drop ip 3.130.168.2    any -> $HOME_NET any (msg:"TPOT HIGH Cobalt Strike JARM AWS"; sid:9000003; rev:1;)
+drop ip 3.129.187.38   any -> $HOME_NET any (msg:"TPOT HIGH Cobalt Strike JARM AWS"; sid:9000004; rev:1;)
+
+# CRITICAL: Bulletproof C2/Hosting
+drop ip 46.151.178.13  any -> $HOME_NET any (msg:"TPOT CRITICAL Chinese-affiliated shell ASN C2"; sid:9000005; rev:1;)
+drop ip 176.65.139.11  any -> $HOME_NET any (msg:"TPOT CRITICAL Bulletproof malware hosting LU"; sid:9000006; rev:1;)
+drop ip 176.65.132.242 any -> $HOME_NET any (msg:"TPOT CRITICAL Bulletproof hosting DE"; sid:9000007; rev:1;)
+drop ip 158.94.210.44  any -> $HOME_NET any (msg:"TPOT CRITICAL Dedicated SMTP attack node"; sid:9000008; rev:1;)
+
+# CRITICAL: ADB C2
+drop ip 176.65.139.3   any -> $HOME_NET any (msg:"TPOT CRITICAL ADB C2 server bot-armv7l"; sid:9000009; rev:1;)
+
+# CRITICAL: SSH compromise actors
+drop ip 81.9.145.130   any -> $HOME_NET any (msg:"TPOT CRITICAL SSH compromise mdrfckr backdoor ES"; sid:9000010; rev:1;)
+drop ip 197.140.11.157 any -> $HOME_NET any (msg:"TPOT CRITICAL SSH compromise coordinated DZ"; sid:9000011; rev:1;)
+drop ip 172.214.209.153 any -> $HOME_NET any (msg:"TPOT CRITICAL SSH campaign initiator Azure"; sid:9000012; rev:1;)
+
+# HIGH: CVE-2024-4577 PHP-CGI worm bots
+drop ip [101.47.8.187,121.180.243.232,122.8.189.143,139.159.197.9,152.32.226.205,170.9.16.186,188.239.23.145,209.126.0.246,211.101.234.227,31.220.81.99,101.36.104.242,115.191.32.57,138.252.125.87,144.91.74.19,165.154.244.122,168.119.100.137,38.77.249.41,96.44.129.158,103.242.3.105,212.73.217.80,213.136.88.186,75.119.152.95] any -> $HOME_NET any (msg:"TPOT HIGH CVE-2024-4577 PHP-CGI Worm Bot"; sid:9000020; rev:1;)
+
+# HIGH: ADB UFO Miner campaign 
+drop ip [58.227.216.183,112.224.144.25,112.81.86.115,115.233.222.114,118.45.247.163,139.200.7.170,171.241.74.189,183.232.212.195,67.84.50.76] any -> $HOME_NET any (msg:"TPOT HIGH ADB UFO Miner Campaign"; sid:9000030; rev:1;)
+
+# HIGH: Mozi/GPON botnet 
+drop ip [139.135.43.207,175.148.154.9,223.123.72.240] any -> $HOME_NET any (msg:"TPOT HIGH Mozi Botnet GPON delivery"; sid:9000031; rev:1;)
+
+# HIGH: Mirai botnet 
+drop ip [189.250.195.97,213.165.187.23,88.119.95.176,91.231.203.3,47.242.51.128] any -> $HOME_NET any (msg:"TPOT HIGH Mirai Botnet IoT"; sid:9000032; rev:1;)
+
+# HIGH: DoublePulsar/EternalBlue scanners 
+drop ip [41.89.238.217,180.253.180.231,196.188.109.42,118.69.61.88,77.79.134.84,103.148.89.154,2.63.248.49,171.251.48.54,113.161.145.33,103.207.14.99,14.249.204.32,178.175.68.23,36.78.148.136,190.104.218.218,187.137.13.245,201.216.239.205] any -> $HOME_NET any (msg:"TPOT HIGH DoublePulsar-EternalBlue Scanner"; sid:9000040; rev:1;)
+
+# HIGH: MikroTik+Telegram data theft
+drop ip [112.185.143.13,45.15.225.137,59.22.201.143] any -> $HOME_NET any (msg:"TPOT HIGH MikroTik Telegram tdata theft campaign"; sid:9000050; rev:1;)
+
+# CIDR blocks
+drop ip 31.70.64.0/18     any -> $HOME_NET any (msg:"TPOT CRITICAL IONOS coordinated VPS fleet /18"; sid:9000060; rev:1;)
+drop ip 160.119.76.0/23   any -> $HOME_NET any (msg:"TPOT CRITICAL Alsycon bulletproof cluster /23"; sid:9000061; rev:1;)
+drop ip 185.224.128.0/24  any -> $HOME_NET any (msg:"TPOT CRITICAL Alsycon bulletproof cluster /24"; sid:9000062; rev:1;)

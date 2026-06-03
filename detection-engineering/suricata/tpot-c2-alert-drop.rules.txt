@@ -1,0 +1,62 @@
+# 
+# T-Pot C2/Domain IOC — Suricata Detection Rules
+# Source: https://github.com/codelassey/
+# Last updated: 2026-05-27
+# Usage: Will add this ruleset to /usr/local/etc/suricata/rules/ or on OPNsense (Services > Intrusion Detection > Administration > Rules)
+# Prince Lassey.. rules derived from my honeypot deployment 
+
+# CVE-2024-4577 PHP-CGI Worm C2 
+alert http $HOME_NET any -> any any (msg:"TPOT CVE-2024-4577 Worm C2 Contact 14.46.136.77"; http.host; content:"14.46.136.77"; sid:9100001; rev:1;)
+alert http $HOME_NET any -> any any (msg:"TPOT CVE-2024-4577 Worm C2 Contact 125.135.169.171"; http.host; content:"125.135.169.171"; sid:9100002; rev:1;)
+alert http $HOME_NET any -> any any (msg:"TPOT CVE-2024-4577 Worm C2 Contact 121.176.14.102"; http.host; content:"121.176.14.102"; sid:9100003; rev:1;)
+alert http any any -> any any (msg:"TPOT CVE-2024-4577 Selfrep Payload in HTTP Body"; http.request_body; content:"cve_2024_4577.selfrep"; nocase; sid:9100004; rev:1;)
+alert http any any -> any any (msg:"TPOT CVE-2024-4577 apache.selfrep Worm Stage 2"; http.request_body; content:"apache.selfrep"; nocase; sid:9100005; rev:1;)
+alert http any any -> any any (msg:"TPOT CVE-2024-4577 Worm Delivery Endpoint /sh"; http.uri; content:"/sh"; startswith; endswith; sid:9100006; rev:1;)
+drop ip $HOME_NET any -> 14.46.136.77 any (msg:"TPOT DROP CVE-2024-4577 C2 Outbound"; sid:9100007; rev:1;)
+drop ip $HOME_NET any -> 125.135.169.171 any (msg:"TPOT DROP CVE-2024-4577 C2 Outbound"; sid:9100008; rev:1;)
+drop ip $HOME_NET any -> 121.176.14.102 any (msg:"TPOT DROP CVE-2024-4577 C2 Outbound"; sid:9100009; rev:1;)
+
+# ADB Exploitation C2 (176.65.139.0/24)
+alert http $HOME_NET any -> 176.65.139.0/24 any (msg:"TPOT ADB C2 Subnet Contact 176.65.139.0/24"; sid:9100010; rev:1;)
+alert http any any -> any any (msg:"TPOT ADB Bot Binary Download bot-armv7l"; http.uri; content:"/bot-armv7l"; sid:9100011; rev:1;)
+drop ip $HOME_NET any -> 176.65.139.3 any (msg:"TPOT DROP ADB Primary C2 176.65.139.3"; sid:9100012; rev:1;)
+
+# Mozi Botnet GPON 
+alert http any any -> any any (msg:"TPOT Mozi Botnet GPON Payload Mozi.m Download"; http.uri; content:"Mozi.m"; sid:9100013; rev:1;)
+alert http $HOME_NET any -> 139.135.43.207 any (msg:"TPOT Mozi GPON C2 Contact 139.135.43.207"; sid:9100014; rev:1;)
+alert http $HOME_NET any -> 175.148.154.9 any (msg:"TPOT Mozi GPON C2 Contact 175.148.154.9"; sid:9100015; rev:1;)
+alert http $HOME_NET any -> 223.123.72.240 any (msg:"TPOT Mozi GPON C2 Contact 223.123.72.240"; sid:9100016; rev:1;)
+alert http any any -> any any (msg:"TPOT Mozi GPON Staging Path /tmp/gpon8080"; http.request_body; content:"/tmp/gpon8080"; sid:9100017; rev:1;)
+
+# WannaCry Killswitch 
+# !!! DO NOT CHANGE TO DROP — blocking this reactivates WannaCry encryption !!!
+alert dns any any -> any any (msg:"TPOT WANNACRY INFECTED HOST - Killswitch DNS Query ALERT ONLY"; dns.query; content:"iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea"; nocase; sid:9100018; rev:1;)
+alert dns any any -> any any (msg:"TPOT WANNACRY INFECTED HOST - Killswitch Variant .ff"; dns.query; content:"iuqerfsodp9ifjaposdfjhgosurijfaewrwergwff"; nocase; sid:9100019; rev:1;)
+alert dns any any -> any any (msg:"TPOT WannaCry Redirect Domain survey-smiles.com"; dns.query; content:"survey-smiles.com"; nocase; sid:9100020; rev:1;)
+
+# CoinHive Miner (ufo.miner APK) 
+alert dns any any -> any any (msg:"TPOT CoinHive Miner C2 DNS — ufo.miner APK Confirmed"; dns.query; content:"coinhive.com"; nocase; sid:9100021; rev:1;)
+alert dns any any -> any any (msg:"TPOT CoinHive Pool ws015 — ufo.miner APK"; dns.query; content:"ws015.coinhive.com"; nocase; sid:9100022; rev:1;)
+
+# Cobalt Strike JARM/TLS Fingerprint 
+alert tls any any -> $HOME_NET any (msg:"TPOT Cobalt Strike JARM TLS Fingerprint 29d29d21c"; ja3.hash; content:"29d29d00029d29d21c42d43d000000"; sid:9100023; rev:1;)
+alert tls any any -> $HOME_NET any (msg:"TPOT Cobalt Strike JARM TLS Fingerprint 29d29d41d"; ja3.hash; content:"29d29d00029d29d00041d41d000000"; sid:9100024; rev:1;)
+alert tls any any -> $HOME_NET any (msg:"TPOT Cobalt Strike Non-Standard Port 4433"; tls.sni; dest_port:4433; sid:9100025; rev:1;)
+alert tls any any -> $HOME_NET any (msg:"TPOT Cobalt Strike Non-Standard Port 22999"; tls.sni; dest_port:22999; sid:9100026; rev:1;)
+
+# mdrfckr SSH Backdoor 
+alert ssh any any -> any any (msg:"TPOT mdrfckr SSH Backdoor Key Comment Detected"; content:"mdrfckr"; sid:9100027; rev:1;)
+
+# ADB Malicious APK Installs 
+alert http any any -> any any (msg:"TPOT ADB UFO Miner APK com.ufo.miner"; content:"com.ufo.miner"; sid:9100028; rev:1;)
+alert http any any -> any any (msg:"TPOT ADB Miner APK /data/local/tmp/trinity"; http.uri; content:"/data/local/tmp/trinity"; sid:9100029; rev:1;)
+
+# Adobe Domain Abuse (PDF Exploit C2 Blending) 
+# ALERT ONLY — legitimate domain being abused by hash a1b6223a PDF exploit
+alert http $HOME_NET any -> any any (msg:"TPOT Adobe Domain Abuse acroipm.adobe.com — PDF Exploit C2 Blend"; http.host; content:"acroipm.adobe.com"; sid:9100030; rev:1;)
+alert http $HOME_NET any -> any any (msg:"TPOT Adobe Domain Abuse acroipm2.adobe.com — PDF Exploit C2 Blend"; http.host; content:"acroipm2.adobe.com"; sid:9100031; rev:1;)
+
+# MikroTik + Telegram tdata Theft 
+drop ip $HOME_NET any -> 112.185.143.13 any (msg:"TPOT DROP MikroTik Telegram tdata Theft C2"; sid:9100032; rev:1;)
+drop ip $HOME_NET any -> 45.15.225.137 any (msg:"TPOT DROP MikroTik Telegram tdata Theft C2"; sid:9100033; rev:1;)
+drop ip $HOME_NET any -> 59.22.201.143 any (msg:"TPOT DROP MikroTik Telegram tdata Theft C2"; sid:9100034; rev:1;)
