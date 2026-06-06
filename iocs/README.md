@@ -49,7 +49,7 @@ acroipm2.adobe.com                             < Legitimate Adobe domain (abused
 
 
 
-Blocking the killswitch domains \*\*reactivates WannaCry encryption\*\* on infected hosts. Monitor for DNS queries to these domains instead - any query = infected host.
+Blocking the killswitch domains **reactivates WannaCry encryption** on infected hosts. Monitor for DNS queries to these domains instead so that any query found equals an infected host.
 
 
 
