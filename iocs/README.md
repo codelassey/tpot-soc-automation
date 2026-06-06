@@ -62,9 +62,7 @@ Run this on every Linux host in your environment:
 
 
 ```bash
-
-grep -r "mdrfckr" /home/\*/.ssh/authorized\_keys /root/.ssh/authorized\_keys 2>/dev/null
-
+grep -r "mdrfckr" /home/*/.ssh/authorized_keys /root/.ssh/authorized_keys 2>/dev/null
 ```
 
 
