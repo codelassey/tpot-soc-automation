@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<ruleset documentation_url="http://docs.opnsense.org/">
+    <location url="http://192.168.56.1:80/" prefix="tpot"/>
+    <files>
+        <file description="T-Pot IP Drop Rules - Confirmed attacker IPs" url="inline::rules/tpot-ip-drop.rules">tpot-ip-drop.rules</file>
+        <file description="T-Pot C2 Alert Drop Rules - C2 URLs, JARM, DNS" url="inline::rules/tpot-c2-alert-drop.rules">tpot-c2-alert-drop.rules</file>
+    </files>
+</ruleset>
