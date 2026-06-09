@@ -1,0 +1,615 @@
+{
+  "name": "soc_workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "84394349-82c6-4a59-a4c3-bd77a25ad4fb",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        -480
+      ],
+      "id": "a17590a7-d50a-4959-a2e7-f36f1dc781a1",
+      "name": "Webhook",
+      "webhookId": "84394349-82c6-4a59-a4c3-bd77a25ad4fb"
+    },
+    {
+      "parameters": {
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        176,
+        96
+      ],
+      "id": "ea970eca-0bee-4599-bfae-22346f2d2349",
+      "name": "Virustotal",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "xAScYPxXX7rTyQuX",
+          "name": "VirusTotal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.ipapi.com/api/{{ $json.body.result.src_ip }}?access_key=YOUR_ACCESS_KEY",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        80,
+        16
+      ],
+      "id": "7194687c-835b-4a17-8116-94a2e7acc422",
+      "name": "IPAPI"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Alert Title: {{ $json.body.search_name }}\nSource IP:  {{ $json.body.result.src_ip }}     \nAffected Host: {{ $json.body.result.host }}\n\nAlert Payload:\n{{ JSON.stringify($json.body.result, null, 2) }}\n\nEnrich all IOCs using virustotal and IPAPI then produce the full report."
+            },
+            {
+              "content": "When alert data is provided, you will extract every IOC present, enrich each one using the \nVirustotal and IPAPI tools, and then produce the investigation report below. I begin \ndirectly with the report and add nothing before or after it.\n\n\n\n*ALERT SUMMARY*\n*---------------------*\nBegin by clearly summarizing what triggered the alert and the nature of the activity \nobserved. Describe the affected user, host, system, or asset involved, along with the \nrelevant source details such as IP address, hostname, username, or process if present in \nthe alert and the time it happened. Explain the type of activity detected, such as authentication failures, \nsuspicious execution, malware detection, privilege escalation, lateral movement, or any \nother notable behavior reflected in the provided data. Keep this section brief.\n\n*ALERT DETAILS*\n*-----------------*\n_Alert Type_        :\n_Alert Source_    :\n_Severity_           :\n_Source IP_         :\n_Destination IP_  :\n_Affected Host_  :\n_Affected User_  :\n_Process/File_    :\n_First Seen_        :\n_Last Seen_        :\n\nOmit any row where the value is not available in the alert data and add rows in the alert data which is not present above.\n\n*IOC ENRICHMENT*\n*---------------------*\nExtract all relevant indicators from the alert, including IP addresses, domains, URLs, \nfile hashes, email addresses, filenames, or other observable artifacts. For each indicator \nfound, enrich it using the available tools and describe the results in plain text. Write \neach IOC as a labeled block in this format:\n\n[IOC TYPE: value]\n_VirusTotal_: Write into details the detection count, overall verdict, any notable vendor flags and every important info you get from Virustotal such as what the community associates the IP to (if malware, what specific malware?). Write into  details the info you get from virustotal's detection, details and community sub-sections.\n\n_IPAPI_: Provide every information possible about the geolocation of the IP such as the country, city, ISP, ASN, and whether the IP belongs to a hosting provider, VPN, or known cloud range. Include IPAPI results for IP addresses only.\n\nIf the alert content suggests that an IOC is malicious, suspicious, or linked to malware \nor a known threat actor, include that assessment clearly and explain its relevance to the \ninvestigation. If no enrichable indicators are found, state that explicitly and continue.\n\n*INVESTIGATION FINDINGS*\n*----------------------------*\nReview the provided logs, event data, and contextual information to identify the most \nimportant findings. Describe the key observations from the alert, including repeated \nbehavior, unusual patterns, event frequency, or anomalies that stand out. If a sequence \nof events can be derived from the data, explain the timeline in a logical order and connect \nthe events in a way that helps clarify what happened. Highlight any evidence suggesting \ncompromise, malicious intent, or suspicious activity, and explain how the observed data \nsupports that assessment. Keep this section brief.\n\n*MITRE ATT&CK MAPPING*\n*---------------------------*\nMap the observed behavior to the MITRE ATT&CK FRAMEWORK with the tactics and techniques \nsupported by the alert data. For each mapping, include the tactic name, technique name, \nand technique ID, and briefly explain why each mapping applies based on the activity seen \nin the alert. Focus on mappings that best align with the actual behavior observed rather \nthan listing techniques too broadly. Write each entry on its own line in this format:\n\n_Tactic_: [tactic name]\n_Technique_: [technique name]\n_ID_: [ATT&CK ID]\n_Reason_: [one sentence explaining why this applies]\n\n*SEVERITY ASSESSMENT*\n*--------------------------*\nAssign a severity rating of Low, Medium, High, or Critical based on the nature of the \nalert and the evidence available. In your assessment, consider the potential impact of the \nactivity, the likelihood that the behavior represents real malicious activity, and the \nimportance or sensitivity of the affected asset, account, or environment. Provide a short \nexplanation that justifies the chosen severity level using the alert details.\n\n_Rating_        :\n_Justification_ :\n\n*RECOMMENDED ACTIONS*\n*----------------------------*\nProvide practical and actionable response recommendations that a SOC analyst could follow. \nDescribe immediate containment actions where appropriate, such as blocking an IP, isolating \na host, disabling an account, or restricting access. Also include mitigation steps that \nwould reduce the risk of recurrence, such as password resets, MFA enforcement, malware \nremoval, or policy changes, along with monitoring or follow-up actions that would help \nvalidate the extent of the activity or detect related behavior. Write the recommendations using bullets below\n\n-\n-\n-\n\n*CONCLUSION*\n*---------------*\nConclude the report by suummarizing what the alert was about then classify the alert as a True Positive, False Positive, Benign \nTrue Positive, or Undetermined. Support that classification with a brief justification \nthat reflects the overall evidence, observed behavior, and level of confidence derived \nfrom the alert analysis.\n\n{Conclusion}\n- _Verdict_:\n- _Justification_\n",
+              "role": "assistant"
+            }
+          ]
+        },
+        "options": {
+          "system": "You are a Tier 1 SOC Analyst Assistant working in a Security Operations Center (SOC). You will be provided with a security alert which may include logs, indicators of compromise, metadata, or SIEM \noutput. Analyze the provided information and generate a structured SOC investigation \nreport rummary based on the evidence contained in the alert.\n\nYou have access to the following tools for threat intelligence enrichment:\n- Virustotal: Use this to gain extensive information for IP addresses, domains, and file hashes\n  IP:     GET https://www.virustotal.com/api/v3/ip_addresses/{ip}\n  Domain: GET https://www.virustotal.com/api/v3/domains/{domain}\n  Hash:   GET https://www.virustotal.com/api/v3/files/{hash}\n- IPAPI: Use this to gaiin extensive information for geolocation and ASN enrichment on any source IP address\n\n\nWhen extracting and classifying IOCs from the alert, follow this priority order:\n- An IPv4 address in X.X.X.X format should be queried against the VirusTotal IP endpoint \nand enriched with IPAPI. \n- A 64-character hex string is a SHA256 hash, 40 characters is \nSHA1, and 32 characters is MD5 - all three use the VirusTotal files endpoint. \n- An email is in the form example@example.com\n- If you encounter a URL beginning with http or https, extract the domain and query the VirusTotal \ndomain endpoint rather than submitting the full URL. \n- A bare hostname with no scheme is treated as a domain and queried directly. Never classify an IP address as a domain or URL, and never submit a full URL to VirusTotal. \n- Enrich every IOC you find before writing the report. \n- If enrichment is unavailable for any indicator, record it as Unknown. \n- Only perform GET requests to VirusTotal.\n- DO NOT PERFORM ENRICHMENT ON TARGET IP/ DESTINATION IP since that IP will mostly be an internal system.\n\nYour output must be plain text only. Do not use Markdown, hashtags, asterisks, bullet \nsymbols, or backticks anywhere in the response. Use ALL CAPS for section headings and \nplain dashes as dividers. Do not add any preamble before the report or any closing remarks \nafter it. Begin your response immediately with the ALERT SUMMARY heading."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -176
+      ],
+      "id": "1f80427f-bacf-4b3c-8ca5-d92e4557cce6",
+      "name": "Ollama"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://192.168.56.143/api/firewall/alias_util/add/Dynamic_Blocklist",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"address\": \"{{ $('Webhook').item.json.body.result.src_ip }}\"}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -400
+      ],
+      "id": "e27525a3-0e25-47bb-ac83-e1338c19825d",
+      "name": "Add IP to OPNsense Alias"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-block",
+              "leftValue": "={{ $json.data.alert_description.includes('True Positive') }}",
+              "rightValue": "block_ip_opnsense",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -144
+      ],
+      "id": "6b1b6cd3-f768-4882-8338-e8648492bb3f",
+      "name": "CLASSIFICATION"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://192.168.56.143/api/firewall/alias/reconfigure",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        -336
+      ],
+      "id": "08beeffc-7e98-4165-ae30-4531f245b3c8",
+      "name": "Apply Firewall Rules",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "o4BCOAWufF9Uf7fW",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "POST",
+        "url": "=https://192.168.56.116/alerts/update/{{ $('CLASSIFICATION').item.json.data.alert_id }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "dfirIrisApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "keypair",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "alert_note",
+              "value": "=CONTAINMENT ACTION — {{ $now.toUTC().toFormat('yyyy-MM-dd HH:mm:ss') }}\n-----------------------------------------\nSource IP {{ $('Webhook').item.json.body.result.src_ip }} has been added to the OPNsense Dynamic_Blocklist alias and firewall rules have been reloaded.  \n\n- Action taken by:{{ $('DFIR-IRIS').item.json.data.modification_history['1781022802.485077'].user }}  \n- Alert: {{ $('Webhook').item.json.body.search_name }}"
+            }
+          ]
+        },
+        "options": {},
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1632,
+        -208
+      ],
+      "id": "3786ba27-1c52-4c5e-9816-a43323c57a1a",
+      "name": "Update DFIR-IRIS with NOTE",
+      "extendsCredential": "dfirIrisApi",
+      "credentials": {
+        "dfirIrisApi": {
+          "id": "MJr3eNqeisXE7rsO",
+          "name": "DFIR-IRIS account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AMJMSRN77",
+          "mode": "list",
+          "cachedResultName": "alerts"
+        },
+        "text": "=*-----------*\n*IP BLOCKED* \n*-----------*\n`{{ $('Webhook').item.json.body.result.src_ip }}` has been added to the OPNsense blocklist.\n\n- Alert: {{ $('Webhook').item.json.body.search_name }}\n- Blocked by: {{ $json.data.owner.user_name }}\n- Time: {{ DateTime.fromSeconds(Number(Object.keys($json.data.modification_history).pop())).toUTC().toFormat('yyyy-MM-dd HH:mm:ss') }}\n- IRIS Alert ID: #{{ $json.data.alert_id }}\n\nFirewall rules reloaded. \nIRIS alert note updated WITH CONTAINMENT action.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1824,
+        -128
+      ],
+      "id": "d8c55d50-fd9c-4802-80ca-213af43c133e",
+      "name": "Send Block message to Slack",
+      "webhookId": "dc01931e-066c-4cee-b500-8744da07823d",
+      "credentials": {
+        "slackApi": {
+          "id": "ThC2o1sPN8GMyM9T",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "POST",
+        "url": "=https://192.168.56.116/alerts/add",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "dfirIrisApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "keypair",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "alert_title",
+              "value": "=🚨 *ALERT -* `{{ $('Webhook').item.json.body.search_name }}` 🚨"
+            },
+            {
+              "name": "alert_description",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "alert_customer_id",
+              "value": "2"
+            },
+            {
+              "name": "alert_severity_id",
+              "value": "4"
+            },
+            {
+              "name": "alert_status_id",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        480,
+        -352
+      ],
+      "id": "4e2e0cd5-c354-4b07-8423-8da9bf930236",
+      "name": "DFIR-IRIS",
+      "extendsCredential": "dfirIrisApi"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "text": "=🚨 *ALERT -* `{{ $('Webhook').item.json.body.search_name }}` 🚨\n\n{{ $json.content }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        480,
+        64
+      ],
+      "id": "aec94fc4-984e-4483-ab85-7c4d8c22a6e0",
+      "name": "SLACK",
+      "webhookId": "2c5cb079-1c2d-4802-bf9f-90e21c8da7f1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        736,
+        -144
+      ],
+      "id": "992743e4-5110-4ee5-b24e-50ef674800e4",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept-encoding": "identity",
+            "content-length": "1926",
+            "host": "192.168.56.116:5678",
+            "content-type": "application/json",
+            "user-agent": "Splunk/E3FF89F5-FE51-48B3-8FBC-CC2078408046",
+            "connection": "close"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "sid": "scheduler__lassey__search__RMD555d7c17aea2e4a8c_at_1781026200_5",
+            "search_name": "Successful Login After Bruteforcee",
+            "app": "search",
+            "owner": "lassey",
+            "results_link": "http://ubuntu-siem:8000/app/search/@go?sid=scheduler__lassey__search__RMD555d7c17aea2e4a8c_at_1781026200_5",
+            "result": {
+              "src_ip": "105.27.148.94",
+              "host": "ip-172-31-44-165",
+              "failed_attempts": "16",
+              "successful_logins": "1",
+              "usernames": [
+                "345gs5662d34",
+                "chris",
+                "deployuser",
+                "f",
+                "mailuser",
+                "mike",
+                "pos",
+                "root",
+                "sammy",
+                "ubuntu"
+              ],
+              "passwords": [
+                "111111",
+                "123",
+                "12345",
+                "123456",
+                "3245gs5662d34",
+                "345gs5662d34",
+                "Aa12345678",
+                "Admin@111",
+                "Asd123321",
+                "Hello123",
+                "arthur",
+                "deployuser",
+                "password123@",
+                "pos",
+                "qwe123456.",
+                "qwer1234567"
+              ],
+              "commands": [
+                "Enter new UNIX password: ",
+                "cat /proc/cpuinfo | grep model | grep name | wc -l",
+                "cat /proc/cpuinfo | grep name | head -n 1 | awk '{print $4,$5,$6,$7,$8,$9;}'",
+                "cat /proc/cpuinfo | grep name | wc -l",
+                "cd ~ && rm -rf .ssh && mkdir .ssh && echo \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArDp4cun2lhr4KUhBGE7VvAcwdli2a8dbnrTOrbMz1+5O73fcBOx8NVbUT0bUanUV9tJ2/9p7+vD0EpZ3Tz/+0kX34uAx1RV/75GVOmNx+9EuWOnvNoaJe0QXxziIg9eLBHpgLMuakb5+BgTFB+rKJAw9u9FSTDengvS8hX1kNFS4Mjux0hJOK8rvcEmPecjdySYMb66nylAKGwCEE6WEQHmd1mUPgHwGQ0hWCwsQk13yCGPK5w6hYp5zYkFnvlC8hGmd4Ww+u97k6pfTGTUbJk14ujvcD9iUKQTTWYYjIIu5PmUux5bsZ0R4WFwdIe6+i6rBLAsPKgAySVKPRK+oRw== mdrfckr\">>.ssh/authorized_keys && chmod -R go= ~/.ssh && cd ~",
+                "cd ~; chattr -ia .ssh; lockr -ia .ssh",
+                "crontab -l",
+                "df -h | head -n 2 | awk 'FNR == 2 {print $2;}'",
+                "echo \"12345\\n2PaBo9flh4My\\n2PaBo9flh4My\\n\"|passwd",
+                "echo -e \"12345\\n2PaBo9flh4My\\n2PaBo9flh4My\"|passwd|bash",
+                "free -m | grep Mem | awk '{print $2 ,$3, $4, $5, $6, $7}'",
+                "ls -lh $(which ls)",
+                "lscpu | grep Model",
+                "top",
+                "uname",
+                "uname -a",
+                "uname -m",
+                "w",
+                "which ls",
+                "whoami"
+              ],
+              "downloaded_file": "a8460f446be540410004b1a8db4083773fa46f7fe76fa84219c93daa1669f8f2"
+            }
+          },
+          "webhookUrl": "http://0.0.0.0:5678/webhook-test/2602f6d7-039e-4ff5-a6c4-5b61409a9670",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Ollama",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Virustotal": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ollama",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IPAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ollama",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama": {
+      "main": [
+        [
+          {
+            "node": "SLACK",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DFIR-IRIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add IP to OPNsense Alias": {
+      "main": [
+        [
+          {
+            "node": "Apply Firewall Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CLASSIFICATION": {
+      "main": [
+        [
+          {
+            "node": "Add IP to OPNsense Alias",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Apply Firewall Rules": {
+      "main": [
+        [
+          {
+            "node": "Update DFIR-IRIS with NOTE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update DFIR-IRIS with NOTE": {
+      "main": [
+        [
+          {
+            "node": "Send Block message to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DFIR-IRIS": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SLACK": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "CLASSIFICATION",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "09fe97d9-d0ce-4516-82b8-2e9dda5b9f49",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5812d12f701b0a542a2dc5e26f915c5de33ccc89d17daa225eed1816d0901c26"
+  },
+  "nodeGroups": [],
+  "id": "4pidkyqcLyEX4pTo",
+  "tags": [
+    {
+      "updatedAt": "2026-06-09T18:20:52.698Z",
+      "createdAt": "2026-06-09T18:20:52.698Z",
+      "id": "JmDGS6myAkWvrk3Q",
+      "name": "IPAPI"
+    },
+    {
+      "updatedAt": "2026-06-09T18:20:49.337Z",
+      "createdAt": "2026-06-09T18:20:49.337Z",
+      "id": "S2hN4dpxWoTnToke",
+      "name": "Ollama"
+    },
+    {
+      "updatedAt": "2026-06-09T18:21:13.275Z",
+      "createdAt": "2026-06-09T18:21:13.275Z",
+      "id": "YK2kWq4lCQJGrqSF",
+      "name": "Slack"
+    },
+    {
+      "updatedAt": "2026-06-09T18:20:37.759Z",
+      "createdAt": "2026-06-09T18:20:37.759Z",
+      "id": "d1Z9RVJ5K0lT75XD",
+      "name": "webhook"
+    },
+    {
+      "updatedAt": "2026-06-09T18:21:39.945Z",
+      "createdAt": "2026-06-09T18:21:39.945Z",
+      "id": "o2TWH1OaR9HOrLtt",
+      "name": "DFIR-IRIS"
+    },
+    {
+      "updatedAt": "2026-06-09T18:20:57.131Z",
+      "createdAt": "2026-06-09T18:20:57.131Z",
+      "id": "pv2yzlvpeuul25ra",
+      "name": "Virustotal"
+    },
+    {
+      "updatedAt": "2026-06-09T18:21:55.152Z",
+      "createdAt": "2026-06-09T18:21:55.152Z",
+      "id": "y8rMP90hG0tLv1g6",
+      "name": "OPNsense"
+    }
+  ]
+}
