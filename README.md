@@ -34,7 +34,7 @@ Here's what this project adds on top of a standard T-Pot deployment:
 -   **An Unbound DNS sinkhole:** This blocks malicious domains identified during the observation period at the resolution layer, so no device on the network can even reach them.
 -   **A full structured threat intelligence report:** Not a screenshot dump. A proper TI report covering attack timelines, coordinated actor attribution, CVE analysis, MITRE ATT&CK mapping, IOCs, and recommendations.
 -   Splunk alerts trigger a webhook into N8N SOAR, which calls Ollama to enrich every IOC via VirusTotal and IPAPI and produce a structured SOC investigation report.
--   If the AI verdict is TRUE POSITIVE, the source IP is automatically added to the OPNsense alias and the firewall rule reloads immediately with no human action required for confirmed threats.
+-   If the AI verdict is TRUE POSITIVE, the source IP is automatically added to an OPNsense alias and firewall rules are reloaded with no human intervention for confirmed threats. In a production environment, this would require further tuning and exception handling for cloud-hosted IP ranges to minimize false positives and avoid blocking legitimate traffic.
 -   The enriched alert is simultaneously forwarded to DFIR-IRIS as a case and to Slack as a formatted notification, so the analyst always knows what was blocked and why.
 -   Analysts can then escalate alerts to full IRIS cases, extract IOCs, add investigation notes, and close cases, all within the same pipeline.
 -   Suricata and Yara rules built based on attacker telemetry.
