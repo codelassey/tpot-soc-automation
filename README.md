@@ -1,5 +1,27 @@
 # End-to-End Threat Intelligence and AI-Augmented SOC Pipeline for Telemetry-Driven Triage, Response, and Containment
 
+<p align="center">
+  <img src="https://img.shields.io/badge/T--Pot-Honeypot-FF9900?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Deployed_on-AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white">
+  <img src="https://img.shields.io/badge/Splunk-SIEM-65A637?style=for-the-badge&logo=splunk&logoColor=white">
+  <img src="https://img.shields.io/badge/OPNsense-Firewall-D94F00?style=for-the-badge&logo=opnsense&logoColor=white">
+  <img src="https://img.shields.io/badge/Suricata-IDS%2FIPS-EF3B2D?style=for-the-badge">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/n8n-SOAR-EA4B71?style=for-the-badge&logo=n8n&logoColor=white">
+  <img src="https://img.shields.io/badge/DFIR--IRIS-Incident_Response-6F42C1?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Ollama-Local_LLM-111111?style=for-the-badge&logo=ollama&logoColor=white">
+  <img src="https://img.shields.io/badge/AI-Powered_Triage-000000?style=for-the-badge&logo=openai&logoColor=white">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/VirusTotal-MCP-394EFF?style=for-the-badge&logo=virustotal&logoColor=white">
+  <img src="https://img.shields.io/badge/IPAPI-IP_Enrichment-22C55E?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Claude-MCP_Client-D97706?style=for-the-badge&logo=anthropic&logoColor=white">
+</p>
+
+~ Closing the loop from initial probe to containment and case resolution.
 
 ---
 
