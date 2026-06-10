@@ -80,42 +80,7 @@ This deployment also feeds data into a companion AI Augmented SOC Detection Engi
 
 ## 2\. Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   AWS EC2 Instance                       │
-│                                                         │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │              T-Pot CE (Docker)                   │   │
-│  │  Cowrie │ Dionaea │ ADBHoney │ ConPot │ Heralding│   │
-│  │  Redis  │ Mailoney│ Tanner  │ Suricata│ p0f      │   │
-│  └─────────────────┬───────────────────────────────┘   │
-│                    │ logs → /tpotce/data/*/log           │
-│  ┌─────────────────▼───────────────────────────────┐   │
-│  │        Splunk Universal Forwarder                │   │
-│  │  inputs.conf → index=honeypot                    │   │
-│  └─────────────────┬───────────────────────────────┘   │
-└────────────────────┼────────────────────────────────────┘
-                     │ port 9997 (encrypted, Tailscale)
-          ┌──────────▼──────────┐
-          │   Tailscale Mesh    │
-          │  (private network)  │
-          └──────────┬──────────┘
-                     │
-┌────────────────────▼────────────────────────────────────┐
-│                  Local VM (Ubuntu)                  │
-│                                                         │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │           Splunk Enterprise                       │  │
-│  │  index=honeypot │ port 9997 receiver              │  │
-│  └─────────────────┬────────────────────────────────┘  │
-│                    │                                    │
-│  ┌─────────────────▼────────────────────────────────┐  │
-│  │        Claude Desktop (Linux)                     │  │
-│  │   Splunk MCP Server → natural language queries    │  │
-│  │   VirusTotal API  → hash and IP enrichment            │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-```
+![](images/media/architecture.png)
 
 ---
 
