@@ -1,4 +1,4 @@
-# End-to-End Threat Intelligence and AI-Augmented SOC Pipeline for Telemetry-Driven Triage, Response, and Containment
+# End-to-End Threat Intelligence and AI-Augmented SOC Pipeline for Telemetry-Driven Triage and Response
 
 <p align="center">
   <img src="https://img.shields.io/badge/T--Pot-Honeypot-FF9900?style=for-the-badge">
