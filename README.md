@@ -1,6 +1,5 @@
-# T-Pot Honeypot Deployment on AWS Cloud: ELK Stack, Splunk SIEM, Tailscale, Claude AI & VirusTotal Threat Intelligence (MCPs)
+# End-to-End Threat Intelligence and AI-Augmented SOC Pipeline for Telemetry-Driven Triage, Response, and Containment
 
-> *Multi-honeypot telemetry > ELK analysis > Splunk SIEM forwarding over Tailscale > AI-powered threat hunting with Claude & VirusTotal enrichment*
 
 ---
 
