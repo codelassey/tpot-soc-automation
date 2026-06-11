@@ -931,7 +931,7 @@ type: "Cowrie" AND eventid: "cowrie.session.file_download"
 
 ## 12. OPNsense Firewall Installation
 
-**NOTE: From section 12 to 14.. on the OPNsense configuration, I wrote the full method on medium. It contains the step by step procedure with images attached. Hence, I strongly recommend you check that how if you do not understnd a particular part (from Scetion 12 to 15)**
+**NOTE: From section 12 to 14.. on the OPNsense configuration, I wrote the full method on my **[medium](https://medium.com/cybersecuritywriteups/how-to-secure-your-homelab-setup-with-opnsense-firewall-in-virtualbox-installation-threat-a54a12fff536)** page. It contains the step by step procedure with images attached. Hence, I strongly recommend you check that how if you do not understnd a particular part (from Scetion 12 to 15)**
 
 ### 12.1 VM Setup and OS Installation
  
@@ -987,11 +987,11 @@ Verified the alias loaded correctly: **Firewall > Diagnostics > Aliases > select
  
 The list of IP addresses from the blocklist should appear. If the list is empty, check that the Python HTTP server is running and reachable from OPNsense. (Again, you can check my writeup on medium if you do not understand)
  
-### 13.3 Firewall Rules — WAN and LAN
+### 13.3 Firewall Rules - WAN and LAN
  
 Two rules, one blocking inbound attacks from blocklisted IPs, one blocking outbound connections to them (C2 prevention).
  
-**WAN Rule — block inbound from blocklist:**
+**WAN Rule - block inbound from blocklist:**
  
 **Firewall > Rules > WAN > Add (up arrow — top of list)**
  
@@ -1005,7 +1005,7 @@ Two rules, one blocking inbound attacks from blocklisted IPs, one blocking outbo
 | Destination | any |
 | Description | Block T-Pot IOC IPs inbound |
  
-**LAN Rule — block outbound to blocklist:**
+**LAN Rule - block outbound to blocklist:**
  
 **Firewall > Rules > LAN > Add (up arrow)**
  
