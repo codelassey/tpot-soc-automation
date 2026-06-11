@@ -90,6 +90,7 @@ This deployment will also feed data into a companion SOC automation project (sep
     - 14.1 [Enabling Suricata in IPS Mode](#141-enabling-suricata-in-ips-mode)
     - 14.2 [Deploying Custom Rules via SFTP](#142-deploying-custom-rules-via-sftp)
     - 14.3 [Routing Traffic Through OPNsense](#143-routing-traffic-through-opnsense)
+15. [DFIR-IRIS Ticketing System Integration](#15-dfir-iris--ticketing-System-sntegration)
 18.  [Threat Intelligence Report](#18-threat-intelligence-report)
 19.  [Key Findings Summary](#19-key-findings-summary)
 20.  [Repository Structure](#20-repository-structure)
@@ -1142,6 +1143,20 @@ After these changes, verify with a ping to a known-good IP (should succeed) and 
  
 ---
 
+## 15. DFIR-IRIS Ticketing System Integration
+**NOTE:** I have a medium writeup on this section as well. It contains the full steps with images. aRead it **[here](https://medium.com/@princelassey/how-to-deploy-dfir-iris-incident-response-ticketing-system-in-virtualbox-into-your-homelab-setup-7661b58e2b9a)**
+
+15.1 Install DFIR-IRIS
+
+```bash
+git clone https://github.com/dfir-iris/iris-web
+cd iris-web
+cp .env.model .env
+# Edit .env — set IRIS_SECRET_KEY and DB passwords
+docker compose up -d
+```
+Access at http://localhost and generate an API token under your user profile.
+
 ## 18. Threat Intelligence Report
 
 The full threat intelligence report for this deployment is available here:
@@ -1164,7 +1179,7 @@ The report covers  includes:
 
 ---
 
-## 13\. Key Findings Summary
+## 19. Key Findings Summary
 
 A few things that stood out from the data:
 
@@ -1180,7 +1195,7 @@ A few things that stood out from the data:
 
 ---
 
-## 14\. Repository Structure
+## 20. Repository Structure
 
 ```
 tpot-threat-intelligence/
