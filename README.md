@@ -78,9 +78,21 @@ This deployment will also feed data into a companion SOC automation project (sep
      -   10.4 [Threat Intelligence Queries](#104-threat-intelligence-queries)
      -   10.5 [Campaign & Attribution Queries](#105-campaign--attribution-queries)
 11.  [Kibana - Key Dashboard Queries](#11-kibana--key-dashboard-queries)
-12.  [Threat Intelligence Report](#12-threat-intelligence-report)
-13.  [Key Findings Summary](#13-key-findings-summary)
-14.  [Repository Structure](#14-repository-structure)
+12. [OPNsense Firewall Installation](#12-opnsense-firewall-installation)
+    - 12.1 [VM Setup and OS Installation](#121-vm-setup-and-os-installation)
+    - 12.2 [Interface Configuration and Web Access](#122-interface-configuration-and-web-access)
+13. [Threat Intelligence Feed > OPNsense Alias](#13-threat-intelligence-feed--opnsense-alias)
+    - 13.1 [Serving the Blocklist over HTTP](#131-serving-the-blocklist-over-http)
+    - 13.2 [Creating the Tpot_threatintel Alias](#132-creating-the-tpot_threatintel-alias)
+    - 13.3 [Firewall Rules - WAN and LAN](#133-firewall-rules--wan-and-lan)
+    - 13.4 [DNS Sinkhole for Malicious Domains](#134-dns-sinkhole-for-malicious-domains)
+14. [Suricata IDS/IPS - Custom Rules Deployment](#14-suricata-idsips-custom-rules-deployment)
+    - 14.1 [Enabling Suricata in IPS Mode](#141-enabling-suricata-in-ips-mode)
+    - 14.2 [Deploying Custom Rules via SFTP](#142-deploying-custom-rules-via-sftp)
+    - 14.3 [Routing Traffic Through OPNsense](#143-routing-traffic-through-opnsense)
+18.  [Threat Intelligence Report](#18-threat-intelligence-report)
+19.  [Key Findings Summary](#19-key-findings-summary)
+20.  [Repository Structure](#20-repository-structure)
 
 ---
 
@@ -917,7 +929,220 @@ type: "Cowrie" AND eventid: "cowrie.session.file_download"
 
 ---
 
-## 12\. Threat Intelligence Report
+## 12. OPNsense Firewall Installation
+
+**NOTE: From section 12 to 14.. on the OPNsense configuration, I wrote the full method on medium. It contains the step by step procedure with images attached. Hence, I strongly recommend you check that how if you do not understnd a particular part (from Scetion 12 to 15)**
+
+### 12.1 VM Setup and OS Installation
+ 
+Downloaded the OPNsense ISO from [opnsense.org/download](https://opnsense.org/download/) — architecture `amd64`, image type `dvd`, mirror set to OPNsense and extracted the compressed ISO when it was done downloading before use.
+ 
+Created a new VirtualBox VM:
+ 
+| Setting | Value |
+|---|---|
+| OS Type | FreeBSD (64-bit) |
+| RAM | 2 GB |
+| CPU | 2 vCPUs |
+| Storage | 10 GB |
+| Network adapters | Adapter 1: NAT (WAN) · Adapter 2: Host-only (LAN) |
+ 
+Booted from the ISO and logged in as `installer` (password: `installer`) to start the installation. Selected the default keymap, then assigned interfaces;  WAN to the NAT adapter, LAN to the host-only adapter.
+ 
+### 12.2 Interface Configuration and Web Access
+ 
+After installation, the web interface was initially unreachable. The fix was to restart OPNsense fully before attempting to connect; the interfaces needed a clean initialisation after first boot lol.
+ 
+Changed the LAN IPv4 address to `192.168.56.144` from the console menu. For this setup, I switched the web interface from HTTPS to HTTP (option available in the console menu) to avoid certificate prompts. In a production environment HTTPS stays on. I then accessed the OPNsense web interface.
+ 
+---
+ 
+## 13. Threat Intelligence Feed > OPNsense Alias
+ 
+### 13.1 Serving the Blocklist over HTTP
+ 
+Rather than manually pasting IPs into OPNsense, the `ip-blocklist.txt` file from this project is served over HTTP from a simple Python server on the host machine. OPNsense pulls from it as a URL alias — the list stays live without touching the firewall config.
+ 
+On the host machine, I navigate to the directory containing `ip-blocklist.txt` and run:
+ 
+```bash
+python3 -m http.server 6050
+```
+ 
+### 13.2 Creating the Tpot_threatintel Alias
+ 
+In OPNsense: **Firewall > Aliases > click the + icon (bottom right)**
+ 
+| Field | Value |
+|---|---|
+| Name | `Tpot_threatintel` |
+| Type | `URL Table (IPs)` |
+| Content | `http://192.168.56.143:6050/ip-blocklist.txt` |
+| Description |  |
+| Refresh Frequency | 1 day  |
+ 
+Clicked **Save** then **Apply Changes**.
+ 
+Verified the alias loaded correctly: **Firewall > Diagnostics > Aliases > select `Tpot_threatintel`**
+ 
+The list of IP addresses from the blocklist should appear. If the list is empty, check that the Python HTTP server is running and reachable from OPNsense. (Again, you can check my writeup on medium if you do not understand)
+ 
+### 13.3 Firewall Rules — WAN and LAN
+ 
+Two rules, one blocking inbound attacks from blocklisted IPs, one blocking outbound connections to them (C2 prevention).
+ 
+**WAN Rule — block inbound from blocklist:**
+ 
+**Firewall > Rules > WAN > Add (up arrow — top of list)**
+ 
+| Field | Value |
+|---|---|
+| Action | Block |
+| Interface | WAN |
+| Direction | in |
+| Protocol | any |
+| Source | `Tpot_threatintel` (alias) |
+| Destination | any |
+| Description | Block T-Pot IOC IPs inbound |
+ 
+**LAN Rule — block outbound to blocklist:**
+ 
+**Firewall > Rules > LAN > Add (up arrow)**
+ 
+| Field | Value |
+|---|---|
+| Action | Block |
+| Interface | LAN |
+| Direction | **in** <<< important: not `out` |
+| Protocol | any |
+| Source | LAN net |
+| Destination | `Tpot_threatintel` (alias) |
+| Description | Block outbound to T-Pot IOC IPs |
+ 
+> The LAN rule must be set to `in` — meaning traffic *entering* the LAN interface from LAN clients toward the internet. Setting it to `out` means traffic *leaving* the LAN interface toward the internet, which is after routing has already happened. The rule would never fire. This was confirmed through troubleshooting hence changing from `out` to `in` is what made the block work.
+ 
+Apply changes after creating both rules and test by attempting to ping a blocklisted IP from a LAN device, it should be blocked and the firewall log should show the match.
+ 
+### 13.4 DNS Sinkhole for Malicious Domains
+ 
+The C2 domains identified during the honeypot observation period are blocked at DNS resolution level using OPNsense's built-in Unbound DNS blocklist feature. Any device on the network querying a sinkholed domain gets a dead response, the connection never leaves.
+ 
+**Services > Unbound DNS > Blocklist**
+ 
+Enabled the blocklist and added the domains from [`iocs/c2-domains-urls.txt`](iocs/c2-domains-urls.txt) in this repo. The three confirmed malicious domains from the observation period are listed there.
+ 
+> **WannaCry killswitch exception:** I did **not** add `iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com` to the DNS sinkhole. Blocking this domain will reactivate WannaCry encryption on any infected host that tries to resolve it. Monitor DNS queries for this domain instead — a query means there is an infected host on the network.
+ 
+---
+ 
+## 14. Suricata IDS/IPS - Custom Rules Deployment
+ 
+### 14.1 Enabling Suricata in IPS Mode
+ 
+**Services → Intrusion Detection → Administration**
+ 
+| Setting | Value |
+|---|---|
+| Enabled | ✅ |
+| IPS Mode | ✅  |
+| Interface | WAN |
+| Pattern Matcher | Hyperscan |
+ 
+Hyperscan is Intel's high-performance regex engine — faster than the default Aho-Corasick on modern hardware.
+
+ 
+### 14.2 Deploying Custom Rules via SFTP
+ 
+The custom Suricata rules built from honeypot IOCs (in [`suricata-rules/tpot-custom.rules`](suricata-rules/tpot-custom.rules)) need to be transferred to the OPNsense FreeBSD filesystem directly. OPNsense does not expose a built-in way to upload arbitrary rule files through the web UI.
+ 
+**Step 1: Enable SSH on OPNsense:**
+ 
+**System > Settings > Administration > Secure Shell > Enable**
+ 
+**Step 2: Prepare the XML metadata file**
+ 
+OPNsense's IDS engine discovers downloadable rulesets through XML metadata files in `/usr/local/opnsense/scripts/suricata/metadata/rules/`. Create a `tpot_ruleset.xml` file and serve it alongside the rules from a Python HTTP server:
+ 
+```xml
+<?xml version="1.0"?>
+<ruleset documentation_url="http://docs.opnsense.org/">
+    <location url="http://192.168.56.1:80/" prefix="tpot"/>
+    <files>
+        <file description="T-Pot IP Drop Rules - Confirmed attacker IPs" url="inline::rules/tpot-ip-drop.rules">tpot-ip-drop.rules</file>
+        <file description="T-Pot C2 Alert Drop Rules - C2 URLs, JARM, DNS" url="inline::rules/tpot-c2-alert-drop.rules">tpot-c2-alert-drop.rules</file>
+    </files>
+</ruleset>
+```
+ 
+**Step 3 — Transfer files via SFTP**
+ 
+The SSH copy command had permission errors when attempted directly hence I used FileZilla (or any SFTP client) instead:
+ 
+- Host: `192.168.56.144`
+- Username: `root`
+- Password: enterred my password here
+- Port: `22`
+Transfered `tpot_ruleset.xml` to:
+```
+/usr/local/opnsense/scripts/suricata/metadata/rules/
+```
+ 
+And transfered `tpot-custom.rules` to:
+```
+/usr/local/etc/suricata/rules/
+```
+ 
+**Step 4: Apply in OPNsense**
+ 
+**Services > Intrusion Detection > Administration > restart the service**
+ 
+**Services > Intrusion Detection > Download** - the custom ruleset should now appear. Download it, then verify the rules loaded:
+ 
+**Services > Intrusion Detection > Rules** - search for rules with the `tpot` prefix to confirm they are listed.
+ 
+### 14.3 Routing Traffic Through OPNsense
+ 
+For LAN devices to have their traffic inspected and filtered by OPNsense, all traffic must route through the firewall, not bypass it via a secondary NAT interface.
+ 
+A common issue in VirtualBox setups: a VM has both a Host-Only adapter (going through OPNsense) and a NAT adapter (going directly to the internet). Traffic prefers the NAT adapter and never touches OPNsense.
+ 
+**Fix: remove the NAT adapter and route everything through OPNsense**
+ 
+```bash
+# Check current routing table
+ip route show
+ 
+# Remove the direct NAT route (enp0s3 / 10.0.2.x)
+sudo ip route del default
+ 
+# Route everything through OPNsense LAN gateway
+sudo ip route add default via 192.168.56.143 dev enp0s8
+ 
+# Verify
+ip route show
+```
+ 
+**Fix DNS: set OPNsense as the DNS server**
+ 
+```bash
+sudo nano /etc/resolv.conf
+```
+ 
+```
+nameserver 192.168.56.143
+```
+ 
+**Fix NAT: configure outbound masquerading in OPNsense**
+ 
+**Firewall > NAT > Outbound > switch to Manual outbound NAT rule generation > Save**
+ 
+Add a rule: Interface WAN, Source LAN net, Translation: WAN address. This allows LAN devices to reach the internet through OPNsense.
+ 
+After these changes, verify with a ping to a known-good IP (should succeed) and a ping to a blocklisted IP (should be blocked and visible in the firewall log).
+ 
+---
+
+## 18. Threat Intelligence Report
 
 The full threat intelligence report for this deployment is available here:
 
