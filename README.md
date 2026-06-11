@@ -91,6 +91,8 @@ This deployment will also feed data into a companion SOC automation project (sep
     - 14.2 [Deploying Custom Rules via SFTP](#142-deploying-custom-rules-via-sftp)
     - 14.3 [Routing Traffic Through OPNsense](#143-routing-traffic-through-opnsense)
 15. [DFIR-IRIS Ticketing System Integration](#15-dfir-iris--ticketing-System-sntegration)
+    - 15.1 [Installation via Docker Compose](#151-installation-via-docker-compose)
+    - 15.2 [Environment Configuration](#152-environment-configuration)
 18.  [Threat Intelligence Report](#18-threat-intelligence-report)
 19.  [Key Findings Summary](#19-key-findings-summary)
 20.  [Repository Structure](#20-repository-structure)
@@ -1145,17 +1147,65 @@ After these changes, verify with a ping to a known-good IP (should succeed) and 
 
 ## 15. DFIR-IRIS Ticketing System Integration
 **NOTE:** I have a medium writeup on this section as well. It contains the full steps with images. aRead it **[here](https://medium.com/@princelassey/how-to-deploy-dfir-iris-incident-response-ticketing-system-in-virtualbox-into-your-homelab-setup-7661b58e2b9a)**
-
-15.1 Install DFIR-IRIS
-
+ 
+### 15.1 Installation via Docker Compose
+ 
+On the N8N-DFIR VM:
+ 
 ```bash
-git clone https://github.com/dfir-iris/iris-web
+git clone https://github.com/dfir-iris/iris-web.git
 cd iris-web
+git checkout v2.4.27
 cp .env.model .env
-# Edit .env — set IRIS_SECRET_KEY and DB passwords
+docker compose pull
+```
+ 
+### 15.2 Environment Configuration
+ 
+```bash
+sudo nano .env
+```
+ 
+Generate all secrets before editing. Never reuse values between fields:
+ 
+```bash
+# Database passwords
+openssl rand -hex 24
+ 
+# IRIS secret key (longer — used for session signing)
+openssl rand -hex 32
+ 
+# Password salt
+openssl rand -hex 16
+```
+ 
+Key fields to set in `.env`:
+ 
+| Field | Generator | Notes |
+|---|---|---|
+| `POSTGRES_PASSWORD` | `openssl rand -hex 24` | Main DB password |
+| `IRIS_SECRET_KEY` | `openssl rand -hex 32` | Session signing key |
+| `IRIS_SECURITY_PASSWORD_SALT` | `openssl rand -hex 16` | Password hashing salt |
+| `IRIS_ADM_PASSWORD` | Custom | Uncomment and set a strong admin password |
+| `IRIS_ADM_API_KEY` | `openssl rand -hex 32` | Uncomment - this is what N8N uses to authenticate |
+| `IRIS_ADM_EMAIL` | Custom | Admin email address |
+ 
+Start the stack:
+ 
+```bash
 docker compose up -d
 ```
-Access at http://localhost and generate an API token under your user profile.
+ 
+Access IRIS at `https://localhost`, accept the self-signed certificate. Log in with the admin credentials set in `.env`.
+ 
+**Post-install: add your analyst account**
+ 
+1. Go to **Advanced** (top right menu) > **Users**
+2. Add your user account
+3. Navigate to **Advanced > User groups** → add the new account to the **Analysts** group
+Copy the API key from your user profile - this is what goes into N8N's IRIS HTTP Request nodes as the `Bearer` token.
+
+---
 
 ## 18. Threat Intelligence Report
 
