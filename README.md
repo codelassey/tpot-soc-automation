@@ -71,33 +71,33 @@ This deployment will also feed data into a companion SOC automation project (sep
     -   9.1 [Installing Claude Desktop (Linux)](#91-installing-claude-desktop-linux)
     -   9.2 [Splunk MCP Server Setup](#92-splunk-mcp-server-setup)
     -   9.3 [MCP Configuration File](#93-mcp-configuration-file)
-10.  [Splunk Queries - Detection Engineering Reference](#10-splunk-queries--detection-engineering-reference)
-     -   10.1 [Discovery & Volume Queries](#101-discovery--volume-queries)
+10. [Splunk Queries Detection Engineering Reference](#10-splunk-queries-detection-engineering-reference)
+     -   10.1 [Discovery Queries](#101-discovery-queries)
      -   10.2 [Attack Surface Queries](#102-attack-surface-queries)
      -   10.3 [Cowrie SSH/Telnet Queries](#103-cowrie-sshtelnet-queries)
      -   10.4 [Threat Intelligence Queries](#104-threat-intelligence-queries)
      -   10.5 [Campaign & Attribution Queries](#105-campaign--attribution-queries)
-11.  [Kibana - Key Dashboard Queries](#11-kibana--key-dashboard-queries)
+11.  [Kibana Dashboard Queries](#11-kibana-dashboard-queries)
 12. [OPNsense Firewall Installation](#12-opnsense-firewall-installation)
     - 12.1 [VM Setup and OS Installation](#121-vm-setup-and-os-installation)
     - 12.2 [Interface Configuration and Web Access](#122-interface-configuration-and-web-access)
 13. [Threat Intelligence Feed > OPNsense Alias](#13-threat-intelligence-feed--opnsense-alias)
     - 13.1 [Serving the Blocklist over HTTP](#131-serving-the-blocklist-over-http)
     - 13.2 [Creating the Tpot_threatintel Alias](#132-creating-the-tpot_threatintel-alias)
-    - 13.3 [Firewall Rules - WAN and LAN](#133-firewall-rules--wan-and-lan)
+    - 13.3 [Firewall Rules WAN and LAN](#133-firewall-rules-wan-and-lan)
     - 13.4 [DNS Sinkhole for Malicious Domains](#134-dns-sinkhole-for-malicious-domains)
-14. [Suricata IDS/IPS - Custom Rules Deployment](#14-suricata-idsips-custom-rules-deployment)
+14. [Suricata IDS/IPS Custom Rules Deployment](#14-suricata-idsips-custom-rules-deployment)
     - 14.1 [Enabling Suricata in IPS Mode](#141-enabling-suricata-in-ips-mode)
     - 14.2 [Deploying Custom Rules via SFTP](#142-deploying-custom-rules-via-sftp)
     - 14.3 [Routing Traffic Through OPNsense](#143-routing-traffic-through-opnsense)
-15. [DFIR-IRIS Ticketing System Integration](#15-dfir-iris--ticketing-System-sntegration)
+15. [DFIR IRIS Ticketing System Integration](#15-dfir-iris-ticketing-system-integration)
     - 15.1 [Installation via Docker Compose](#151-installation-via-docker-compose)
     - 15.2 [Environment Configuration](#152-environment-configuration)
-16. [N8N SOAR - Installation and Workflow Setup](#16-n8n-soar--installation-and-workflow-setup)
+16. [N8N SOAR - Installation and Workflow Setup](#16-n8n-soar---installation-and-workflow-setup)
     - 16.1 [Installing N8N via Docker Compose](#161-installing-n8n-via-docker-compose)
     - 16.2 [Connecting Ollama from Windows Host](#162-connecting-ollama-from-windows-host)
     - 16.3 [Building the Splunk Alert Trigger](#163-building-the-splunk-alert-trigger)
-    - 16.4 [AI Triage Workflow - Ollama + VirusTotal + IPAPI](#164-ai-triage-workflow--gemini--virustotal--ipapi)
+    - 16.4 [AI Triage Workflow - Ollama + VirusTotal + IPAPI](#164-ai-triage-workflow---ollama--virustotal--ipapi)
     - 16.5 [Auto-Block on True Positive Verdict](#165-auto-block-on-true-positive-verdict)
     - 16.6 [DFIR-IRIS Case Creation and Slack Notification](#166-dfir-iris-case-creation-and-slack-notification)
 18.  [Threat Intelligence Report](#18-threat-intelligence-report)
@@ -675,11 +675,11 @@ sudo dpkg -i claude-desktop-*-amd64.deb
 
 In Splunk Enterprise:
 
-**1\. Install the Splunk MCP Server app** from Splunkbase (search: "MCP Server")
+**1. Install the Splunk MCP Server app** from Splunkbase (search: "MCP Server")
 
 ![](images/media/image110.png)
 
-**2\. Create an `mcp_user` role:**
+**2. Create an `mcp_user` role:**
 
 Settings > Roles > New Role
 
@@ -688,11 +688,11 @@ Settings > Roles > New Role
 
 ![](images/media/image112.png) ![](images/media/image113.png) ![](images/media/image114.png)
 
-**3\. Create an `mcp_user_1` account and assign it the `mcp_user` role**
+**3. Create an `mcp_user_1` account and assign it the `mcp_user` role**
 
 ![](images/media/image115.png) ![](images/media/image116.png) ![](images/media/image117.png)
 
-**4\. Generate an MCP authentication token** for `mcp_user_1`:
+**4. Generate an MCP authentication token** for `mcp_user_1`:
 
 Settings > Tokens > New Token
 
@@ -700,7 +700,7 @@ Settings > Tokens > New Token
 
 Copy the token immediately. Once you close that page it's gone forever and you'll have to generate a new one.
 
-**5\. Restart Splunk** (Settings > Server Controls > Restart Splunk)
+**5. Restart Splunk** (Settings > Server Controls > Restart Splunk)
 
 ### 9.3 MCP Configuration File
 
@@ -754,11 +754,11 @@ Query the honeypot index and identify the top 10 IPs performing port scanning ac
 
 ---
 
-## 10\. Splunk Queries - Detection Engineering Reference
+## 10 Splunk Queries Detection Engineering Reference
 
 All queries run against `index=honeypot`. These are the core queries used throughout the analysis and serve as a starting point for detection rule development.
 
-### 10.1 Discovery  Queries
+### 10.1 Discovery Queries
 
 ![](images/media/image129.png)
 
@@ -904,7 +904,7 @@ index=honeypot sourcetype=cowrie eventid="cowrie.command.input"
 
 ---
 
-## 11\. Kibana - Key Dashboard Queries
+## 11. Kibana Dashboard Queries
 
 T-Pot's built-in Kibana dashboards are excellent for visual exploration. The most useful queries for digging beyond the defaults:
 
@@ -997,7 +997,7 @@ Verified the alias loaded correctly: **Firewall > Diagnostics > Aliases > select
  
 The list of IP addresses from the blocklist should appear. If the list is empty, check that the Python HTTP server is running and reachable from OPNsense. (Again, you can check my writeup on medium if you do not understand)
  
-### 13.3 Firewall Rules - WAN and LAN
+### 13.3 Firewall Rules WAN and LAN
  
 Two rules, one blocking inbound attacks from blocklisted IPs, one blocking outbound connections to them (C2 prevention).
  
@@ -1045,7 +1045,7 @@ Enabled the blocklist and added the domains from [`iocs/c2-domains-urls.txt`](io
  
 ---
  
-## 14. Suricata IDS/IPS - Custom Rules Deployment
+## 14. Suricata IDS/IPS Custom Rules Deployment
  
 ### 14.1 Enabling Suricata in IPS Mode
  
@@ -1214,6 +1214,262 @@ Copy the API key from your user profile - this is what goes into N8N's IRIS HTTP
 
 ---
 
+## 16. N8N SOAR - Installation and Workflow Setup
+
+**NOTE:** I have a medium writeup on this section as well. It contains the full steps with images. Read it **[here](https://medium.com/@princelassey/how-to-deploy-dfir-iris-incident-response-ticketing-system-in-virtualbox-into-your-homelab-setup-7661b58e2b9a)**
+
+### 16.1 Installing N8N via Docker Compose
+ 
+On the N8N-DFIR VM, I created the working directory and compose file:
+ 
+```bash
+mkdir n8n
+cd n8n
+nano compose.yaml
+```
+ 
+`compose.yaml`: [`n8n-compose.yaml`](config/n8n-compose.yaml)
+ 
+Browse to `http://localhost:5678`, set your account password, and activate the free premium features with the emailed key under **Settings > Usage and Plan**.
+
+ 
+### 16.2 Connecting Ollama from Windows Host
+ 
+Ollama runs on my Windows host machine. N8N on the VirtualBox VM needs to reach it on port `11434`. By default, Windows Firewall blocks this. Hence, I opened PowerShell **as Administrator** on the Windows host:
+ 
+```powershell
+New-NetFirewallRule `
+  -DisplayName "Ollama 11434" `
+  -Direction Inbound `
+  -Protocol TCP `
+  -LocalPort 11434 `
+  -Action Allow
+```
+ 
+Then verified from the N8N VM:
+ 
+```bash
+curl -v http://192.168.56.1:11434/api/tags
+```
+ 
+It should return the list of available models. If it fails, check that Ollama is running (`ollama serve`) and that the firewall rule was created for the correct profile (Domain/Private/Public).
+ 
+> **Note:** In this project, the AI agent ended up using the **Gemma4:31b** model due to its superior instruction-following for structured report generation. Other smaller models strucgles to call the Virustotal and IPAPI tolols and even could not generate the alert summary. I realised that the prompt may have to be compressed into one user prompt before a model like qwen3.5 can be ablee to generate something meaningful.
+ 
+### 16.3 Building the Splunk Alert Trigger
+ 
+Two Splunk saved searches were created as the pipeline entry points:
+ 
+**Alert 1 - Elasticsearch Ransom Note Attempt:**
+ 
+**Alert 2 - Successful Login after Bruteforce:**
+ 
+
+ 
+**Alert configuration for both:**
+ 
+- **Trigger condition:** Number of results is greater than 0
+- **Schedule:** Cron — `* * * * *` (every minute)
+- **Trigger actions:**
+  - Add to Triggered Alerts
+  - Webhook > URL: `http://<n8n-tailscale-ip>:5678/webhook/2602f6d7-039...`
+After saving the alert, trigger it manually once and **pin the test event in N8N** - this gives you all the field names to reference when building the rest of the workflow without waiting for a live alert.
+ 
+### 16.4 AI Triage Workflow - Ollama + VirusTotal + IPAPI
+ 
+The full N8N workflow JSON is available in [`n8n-workflows/triage-pipeline.json`](n8n-workflows/triage-pipeline.json). Import it directly into N8N via **Workflows > Import from file**.
+ 
+ 
+**AI Agent system prompt** (abbreviated - full prompt in the workflow JSON as well):
+ 
+**Role: User**
+```
+Alert Title: {{ $json.body.search_name }} 
+Source IP: {{ $json.body.result.src_ip }}
+Affected Host: {{ $json.body.result.host }}
+Alert Payload: {{ JSON.stringify($json.body.result, null, 2) }}
+Enrich all IOCs using virustotal and IPAPI then produce the full report
+```
+
+**Role: Assistant**
+```
+When alert data is provided, you will extract every IOC present, enrich each one using the Virustotal and IPAPI tools, and then produce the investigation report below. I begin directly with the report and add nothing before or after it.
+
+*ALERT SUMMARY*
+*---------------------*
+Begin by clearly summarizing what triggered the alert and the nature of the activity 
+observed. Describe the affected user, host, system, or asset involved, along with the 
+relevant source details such as IP address, hostname, username, or process if present in 
+the alert and the time it happened. Explain the type of activity detected, such as authentication failures, 
+suspicious execution, malware detection, privilege escalation, lateral movement, or any 
+other notable behavior reflected in the provided data. Keep this section brief.
+
+*ALERT DETAILS*
+*-----------------*
+_Alert Type_        :
+_Alert Source_    :
+_Severity_           :
+_Source IP_         :
+_Destination IP_  :
+_Affected Host_  :
+_Affected User_  :
+_Process/File_    :
+_First Seen_        :
+_Last Seen_        :
+
+Omit any row where the value is not available in the alert data and add rows in the alert data which is not present above.
+
+*IOC ENRICHMENT*
+*---------------------*
+Extract all relevant indicators from the alert, including IP addresses, domains, URLs, 
+file hashes, email addresses, filenames, or other observable artifacts. For each indicator 
+found, enrich it using the available tools and describe the results in plain text. Write 
+each IOC as a labeled block in this format:
+
+[IOC TYPE: value]
+_VirusTotal_: Write into details the detection count, overall verdict, any notable vendor flags and every important info you get from Virustotal such as what the community associates the IP to (if malware, what specific malware?). Write into  details the info you get from virustotal's detection, details and community sub-sections.
+
+_IPAPI_: Provide every information possible about the geolocation of the IP such as the country, city, ISP, ASN, and whether the IP belongs to a hosting provider, VPN, or known cloud range. Include IPAPI results for IP addresses only.
+
+If the alert content suggests that an IOC is malicious, suspicious, or linked to malware 
+or a known threat actor, include that assessment clearly and explain its relevance to the 
+investigation. If no enrichable indicators are found, state that explicitly and continue.
+
+*INVESTIGATION FINDINGS*
+*----------------------------*
+Review the provided logs, event data, and contextual information to identify the most 
+important findings. Describe the key observations from the alert, including repeated 
+behavior, unusual patterns, event frequency, or anomalies that stand out. If a sequence 
+of events can be derived from the data, explain the timeline in a logical order and connect 
+the events in a way that helps clarify what happened. Highlight any evidence suggesting 
+compromise, malicious intent, or suspicious activity, and explain how the observed data 
+supports that assessment. Keep this section brief.
+
+*MITRE ATT&CK MAPPING*
+*---------------------------*
+Map the observed behavior to the MITRE ATT&CK FRAMEWORK with the tactics and techniques 
+supported by the alert data. For each mapping, include the tactic name, technique name, 
+and technique ID, and briefly explain why each mapping applies based on the activity seen 
+in the alert. Focus on mappings that best align with the actual behavior observed rather 
+than listing techniques too broadly. Write each entry on its own line in this format:
+
+_Tactic_: [tactic name]
+_Technique_: [technique name]
+_ID_: [ATT&CK ID]
+_Reason_: [one sentence explaining why this applies]
+
+*SEVERITY ASSESSMENT*
+*--------------------------*
+Assign a severity rating of Low, Medium, High, or Critical based on the nature of the 
+alert and the evidence available. In your assessment, consider the potential impact of the 
+activity, the likelihood that the behavior represents real malicious activity, and the 
+importance or sensitivity of the affected asset, account, or environment. Provide a short 
+explanation that justifies the chosen severity level using the alert details.
+
+_Rating_        :
+_Justification_ :
+
+*RECOMMENDED ACTIONS*
+*----------------------------*
+Provide practical and actionable response recommendations that a SOC analyst could follow. 
+Describe immediate containment actions where appropriate, such as blocking an IP, isolating 
+a host, disabling an account, or restricting access. Also include mitigation steps that 
+would reduce the risk of recurrence, such as password resets, MFA enforcement, malware 
+removal, or policy changes, along with monitoring or follow-up actions that would help 
+validate the extent of the activity or detect related behavior. Write the recommendations using bullets below
+
+-
+-
+-
+
+*CONCLUSION*
+*---------------*
+Conclude the report by suummarizing what the alert was about then classify the alert as a True Positive, False Positive, Benign 
+True Positive, or Undetermined. Support that classification with a brief justification 
+that reflects the overall evidence, observed behavior, and level of confidence derived 
+from the alert analysis.
+
+{Conclusion}
+- _Verdict_:
+- _Justification_:
+
+```
+
+**Role: System Message**
+```
+You are a Tier 1 SOC Analyst Assistant working in a Security Operations Center (SOC). You will be provided with a security alert which may include logs, indicators of compromise, metadata, or SIEM 
+output. Analyze the provided information and generate a structured SOC investigation 
+report rummary based on the evidence contained in the alert.
+
+You have access to the following tools for threat intelligence enrichment:
+- Virustotal: Use this to gain extensive information for IP addresses, domains, and file hashes
+  IP:     GET https://www.virustotal.com/api/v3/ip_addresses/{ip}
+  Domain: GET https://www.virustotal.com/api/v3/domains/{domain}
+  Hash:   GET https://www.virustotal.com/api/v3/files/{hash}
+- IPAPI: Use this to gaiin extensive information for geolocation and ASN enrichment on any source IP address
+
+
+When extracting and classifying IOCs from the alert, follow this priority order:
+- An IPv4 address in X.X.X.X format should be queried against the VirusTotal IP endpoint 
+and enriched with IPAPI. 
+- A 64-character hex string is a SHA256 hash, 40 characters is 
+SHA1, and 32 characters is MD5 - all three use the VirusTotal files endpoint. 
+- An email is in the form example@example.com
+- If you encounter a URL beginning with http or https, extract the domain and query the VirusTotal 
+domain endpoint rather than submitting the full URL. 
+- A bare hostname with no scheme is treated as a domain and queried directly. Never classify an IP address as a domain or URL, and never submit a full URL to VirusTotal. 
+- Enrich every IOC you find before writing the report. 
+- If enrichment is unavailable for any indicator, record it as Unknown. 
+- Only perform GET requests to VirusTotal.
+- DO NOT PERFORM ENRICHMENT ON TARGET IP/ DESTINATION IP since that IP will mostly be an internal system.
+
+Your output must be plain text only. Do not use Markdown, hashtags, asterisks, bullet 
+symbols, or backticks anywhere in the response. Use ALL CAPS for section headings and 
+plain dashes as dividers. Do not add any preamble before the report or any closing remarks 
+after it. Begin your response immediately with the ALERT SUMMARY heading.
+
+```
+
+ 
+### 16.5 Auto-Block on True Positive Verdict
+ 
+After the AI produces its report, an **IF node** checks the output for the verdict:
+ 
+```
+Condition: {{ $json.output.includes('True Positive') }}
+```
+ 
+**TRUE branch > OPNsense block sequence:**
+ 
+```
+IF (True Positive)
+    └─► HTTP Request - OPNsense: add IP to alias
+    │     POST https://192.168.56.144/api/firewall/alias/addItem/Dynamic_Blocklist
+    │     Auth: Basic (api_key:api_secret base64)
+    │     Body: { "address": "{{ source_ip }}" }
+    │
+    └─► HTTP Request - OPNsense: apply rule
+          POST https://192.168.56.144/api/firewall/alias/reconfigure
+```
+ 
+**FALSE branch > ends the workflow** - the alert was sent to IRIS and Slack, but no block is applied.
+ 
+Confirmed working: after the Elasticsearch ransom note alert fired with a True Positive verdict, IP `105.27.148.94` was automatically added to the `Dynamic__Blocklist` alias and the firewall rules applied, verified in **Firewall > Diagnostics > Aliases > Tpot_threatintel**.
+ 
+### 16.6 DFIR-IRIS Case Creation and Slack Notification
+ 
+The enriched AI report is sent to DFIR-IRIS as an **alert** (not a case directly). Alerts in IRIS represent incoming events that analysts review and can escalate into full cases. After receiving the enriched alert in IRIS, the investigation workflow is:
+ 
+1. Review the AI report and VirusTotal enrichment in the alert
+2. Escalate to a **Case** if investigation is needed beyond the auto-block
+3. Extract IOCs using the IRIS IOC module
+4. Add investigation notes as the case progresses
+5. Close the case with final verdict and summary
+
+---
+
+
+
 ## 18. Threat Intelligence Report
 
 The full threat intelligence report for this deployment is available here:
@@ -1255,30 +1511,58 @@ A few things that stood out from the data:
 ## 20. Repository Structure
 
 ```
-tpot-threat-intelligence/
+tpot-soc-automation/
 │
 ├── LICENSE
 │
-├── README.md                           
+├── README.md
 │
 ├── config/
-│   ├── inputs.conf                    
-│   ├── claude_desktop_config.json     
+│   ├── inputs.conf
+│   ├── claude_desktop_config.json
+│   └── n8n-compose.yaml
 │
 ├── scripts/
-│   ├── install-docker.sh   
+│   └── install-docker.sh
+│
+├── n8n-workflow/
+│   └── n8n-soc-workflow.json
+│
+├── detection-engineering/
+│   ├── splunk/
+│   │   └── queries.md
+│   │
+│   ├── suricata/
+│   │   ├── tpot_ruleset.xml
+│   │   ├── tpot-c2-alert-drop.rules
+│   │   └── tpot-ip-drop.rules
+│   │
+│   └── yara/
+│       └── tpot-rules.yar
 │
 ├── report/
 │   ├── T-Pot_Threat_Intelligence_Report_v2.md
-│   ├── T-Pot_Threat_Intelligence_Report_v2.pdf
+│   └── T-Pot_Threat_Intelligence_Report_v2.pdf
 │
 ├── queries/
-│   ├── queries.md
+│   └── queries.md
 │
 ├── iocs/
-│   ├──      
+│   ├── README.md
+│   ├── c2-urls.txt
+│   ├── dns-blocklist.txt
+│   ├── ip-blocklist.txt
+│   ├── malicious-md5-hashes-wannacry.txt
+│   ├── malicious-sha256-hashes.txt
+│   ├── mdrfckr-ssh-backdoor-key.txt
+│   └── undetected-hashes.txt
 │
 └── images/
+    └── media/
+        ├── *.png
+        ├── *.png
+        ├── *.png
+        └── ...
 ```
 
 ---
@@ -1288,4 +1572,3 @@ tpot-threat-intelligence/
 -   The T-Pot MCP connection used in log analysis was through Claude.ai - the Splunk and Virustotal MCP servers were connected as tools in the conversation.
 -   All VirusTotal lookups were performed via MCP; the hash and IP results are documented in the full report.
 -   Log retention was adjusted to ~3 months partway through the deployment. Some early-window tool detections (Masscan, Mozi, libredtail-http) are documented from pre-rotation logs and are no longer queryable in the current Splunk index.
--   This project feeds into a companion **SOC Detection Engineering and Automation Project** (separate repository) where captured IOCs and attack patterns are used to build and validate Splunk detection rules.
