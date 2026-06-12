@@ -115,7 +115,7 @@ This deployment will also feed data into a companion SOC automation project (sep
 | Region | us-east-1 (United States - N. Virginia) |
 | OS | Ubuntu |
 | Observation period | 21 days |
-| Total events captured | ~3.47 million |
+| Total events captured | ~3.47 million (may have some noise) |
 | Unique attacker IPs | 20,727+ |
 | Honeypot services | 20 active sourcetypes |
 | SIEM | ELK and Splunk Enterprise (local VM, forwarded via Tailscale) |
@@ -125,13 +125,13 @@ This deployment will also feed data into a companion SOC automation project (sep
 
 ---
 
-## 2\. Architecture
+## 2. Architecture
 
 ![](images/media/architecture.png)
 
 ---
 
-## 3\. EC2 Instance Setup
+## 3. EC2 Instance Setup
 
 ### 3.1 IAM User & Instance Launch
 
@@ -1049,7 +1049,7 @@ Enabled the blocklist and added the domains from [`iocs/c2-domains-urls.txt`](io
  
 ### 14.1 Enabling Suricata in IPS Mode
  
-**Services → Intrusion Detection → Administration**
+**Services > Intrusion Detection > Administration**
  
 | Setting | Value |
 |---|---|
@@ -1209,7 +1209,7 @@ Access IRIS at `https://localhost`, accept the self-signed certificate. Log in w
  
 1. Go to **Advanced** (top right menu) > **Users**
 2. Add your user account
-3. Navigate to **Advanced > User groups** → add the new account to the **Analysts** group
+3. Navigate to **Advanced > User groups** > add the new account to the **Analysts** group
 Copy the API key from your user profile - this is what goes into N8N's IRIS HTTP Request nodes as the `Bearer` token.
 
 ---
