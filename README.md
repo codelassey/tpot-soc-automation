@@ -1216,7 +1216,7 @@ Copy the API key from your user profile - this is what goes into N8N's IRIS HTTP
 
 ## 16. N8N SOAR - Installation and Workflow Setup
 
-**NOTE:** I have a medium writeup on this section as well. It contains the full steps with images. Read it **[here](https://medium.com/@princelassey/how-to-deploy-dfir-iris-incident-response-ticketing-system-in-virtualbox-into-your-homelab-setup-7661b58e2b9a)**
+**NOTE:** I have a medium writeup on this section as well. It contains the full steps with images. Read it **[here](https://medium.com/@princelassey/integrating-an-ai-powered-security-orchestration-workflow-into-your-homelab-setup-with-n8n-splunk-ea3cb616d8af)**
 
 ### 16.1 Installing N8N via Docker Compose
  
@@ -1504,7 +1504,7 @@ A few things that stood out from the data:
 
 **Three malware samples don't exist on VirusTotal.** Hashes `7aa7aae3...`, `f7a2eec2...`, and `93d7393...` from Cowrie are genuinely absent. Original, uncatalogued samples sitting on the honeypot - which is exactly what honeypots are for.
 
-**A human was in the box.** IP `40.112.183.29` (Azure) ran `w` and `top` manually across three separate sessions with 6–11 minute natural gaps between them. Every other IP in the dataset ran scripted playbooks at machine speed. This one was someone sitting at a keyboard.
+**A human might have been in the box.** IP `40.112.183.29` (Azure) ran `w` and `top` manually across three separate sessions with 6–11 minute natural gaps between them. Every other IP in the dataset ran scripted playbooks at machine speed. This one was someone sitting at a keyboard.
 
 ---
 
