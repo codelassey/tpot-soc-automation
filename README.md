@@ -1,4 +1,4 @@
-# End-to-End Threat Intelligence and AI-Augmented SOC Pipeline for Telemetry-Driven Triage and Response
+# End-to-End Threat Intelligence and AI-Powered SOC Pipeline for Telemetry-Driven Triage and Response
 
 
 <p align="center" style="white-space: nowrap; overflow-x: auto;">
